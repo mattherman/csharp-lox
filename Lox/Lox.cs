@@ -36,7 +36,7 @@ namespace Lox
 
         private static void RunPrompt()
         {
-            while(true)
+            while (true)
             {
                 Console.Write("> ");
                 var input = Console.ReadLine();

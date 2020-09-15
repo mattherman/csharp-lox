@@ -20,7 +20,7 @@ namespace Lox
 
         public IList<Token> ScanTokens()
         {
-            while(!IsAtEnd())
+            while (!IsAtEnd())
             {
                 start = current;
                 ScanToken();
@@ -32,7 +32,7 @@ namespace Lox
 
         private void ScanToken()
         {
-            switch(Advance())
+            switch (Advance())
             {
                 case '(': AddToken(TokenType.LEFT_PAREN); break;
                 case ')': AddToken(TokenType.RIGHT_PAREN); break;
