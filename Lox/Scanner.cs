@@ -7,11 +7,11 @@ namespace Lox
         private readonly string _source;
         private readonly IList<Token> _tokens = new List<Token>();
 
-        private bool IsAtEnd() => current >= _source.Length;
+        private bool IsAtEnd() => _current >= _source.Length;
 
-        private int start = 0;
-        private int current = 0;
-        private int line = 1;
+        private int _start = 0;
+        private int _current = 0;
+        private int _line = 1;
 
         public Scanner(string source)
         {
@@ -22,11 +22,11 @@ namespace Lox
         {
             while (!IsAtEnd())
             {
-                start = current;
+                _start = _current;
                 ScanToken();
             }
 
-            _tokens.Add(new Token(TokenType.EOF, "", null, line));
+            _tokens.Add(new Token(TokenType.EOF, "", null, _line));
             return _tokens;
         }
 
@@ -84,25 +84,52 @@ namespace Lox
                         TokenType.GREATER_EQUAL :
                         TokenType.GREATER);
                     break;
+                case '/':
+                    if (Match('/'))
+                    {
+                        // If it is a comment, we want to consume the entire line
+                        while (Peek() != '\n' && !IsAtEnd())
+                        {
+                            Advance();
+                        }
+                    }
+                    else
+                    {
+                        AddToken(TokenType.SLASH);
+                    }
+                    break;
+                case ' ':
+                case '\r':
+                case '\t':
+                    break;
+                case '\n':
+                    _line++;
+                    break;
                 default:
-                    Lox.Error(line, "Unexpected character.");
+                    Lox.Error(_line, "Unexpected character.");
                     break;
             }
+        }
+
+        private char Peek()
+        {
+            if (IsAtEnd()) return '\0';
+            return _source[_current];
         }
 
         private bool Match(char expected)
         {
             if (IsAtEnd()) return false;
-            if (_source[current] != expected) return false;
+            if (_source[_current] != expected) return false;
 
-            current++;
+            _current++;
             return true;
         }
 
         private char Advance()
         {
-            current++;
-            return _source[current - 1];
+            _current++;
+            return _source[_current - 1];
         }
 
         private void AddToken(TokenType type)
@@ -112,8 +139,8 @@ namespace Lox
 
         private void AddToken(TokenType type, object literal)
         {
-            var text = _source.Substring(start, current - start);
-            _tokens.Add(new Token(type, text, literal, line));
+            var text = _source.Substring(_start, _current - _start);
+            _tokens.Add(new Token(type, text, literal, _line));
         }
     }
 }
