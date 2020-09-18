@@ -111,6 +111,26 @@ namespace Lox
             }
         }
 
+        private void String()
+        {
+            while (Peek() != '"' && !IsAtEnd())
+            {
+                if (Peek() == '\n') _line++;
+                Advance();
+            }
+
+            if (IsAtEnd())
+            {
+                Lox.Error(_line, "Unterminated string.");
+                return;
+            }
+
+            Advance();
+
+            var value = _source.Substring(_start + 1, _current - 1);
+            AddToken(TokenType.STRING, value);
+        }
+
         private char Peek()
         {
             if (IsAtEnd()) return '\0';
