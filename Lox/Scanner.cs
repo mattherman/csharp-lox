@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lox
@@ -105,6 +106,9 @@ namespace Lox
                 case '\n':
                     _line++;
                     break;
+                case '"':
+                    String();
+                    break;
                 default:
                     Lox.Error(_line, "Unexpected character.");
                     break;
@@ -127,7 +131,9 @@ namespace Lox
 
             Advance();
 
-            var value = _source.Substring(_start + 1, _current - 1);
+            // Length is difference between _current and _start minus the two quotes
+            var length = (_current - _start) - 2;
+            var value = _source.Substring(_start + 1, length);
             AddToken(TokenType.STRING, value);
         }
 
