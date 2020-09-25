@@ -29,7 +29,9 @@ namespace GenerateAst
 
             lines.Add("namespace Lox");
             lines.Add("{");
-            lines.Add($"public abstract class {baseName} {{ }}");
+            
+            DefineBaseClass(lines, baseName);
+            DefineVisitor(lines, baseName, types);
 
             foreach (var type in types)
             {
@@ -45,6 +47,22 @@ namespace GenerateAst
 
             var path = $"{outputDir}/{baseName}.cs";
             File.WriteAllLines(path, lines);
+        }
+
+        private static void DefineVisitor(IList<string> lines, string baseName, IEnumerable<string> types)
+        {
+            lines.Add(string.Empty);
+            lines.Add("\tpublic interface IVisitor<T>");
+            lines.Add("\t{");
+
+            foreach (var type in types)
+            {
+                var typeParts = type.Split(":");
+                var typeName = typeParts[0].Trim();
+                lines.Add($"\t\tT Visit{typeName}{baseName}({typeName} {baseName.ToLower()});");
+            }
+
+            lines.Add("\t}");
         }
 
         private static void DefineType(IList<string> lines, string baseName, string className, string fieldList)
@@ -73,6 +91,20 @@ namespace GenerateAst
             }
 
             lines.Add("\t\t}");
+
+            lines.Add(string.Empty);
+            lines.Add("\t\tpublic override T Accept<T>(IVisitor<T> visitor)");
+            lines.Add("\t\t{");
+            lines.Add($"\t\t\treturn visitor.Visit{className}{baseName}(this);");
+            lines.Add("\t\t}");
+            lines.Add("\t}");
+        }
+
+        private static void DefineBaseClass(IList<string> lines, string baseName)
+        {
+            lines.Add($"\tpublic abstract class {baseName}");
+            lines.Add("\t{");
+            lines.Add("\t\tpublic abstract T Accept<T>(IVisitor<T> visitor);");
             lines.Add("\t}");
         }
     }
