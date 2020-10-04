@@ -116,9 +116,7 @@ namespace Lox
 
             if (Match(TokenType.LEFT_PAREN))
             {
-                Console.WriteLine("Matched LEFT_PAREN");
                 var expr = Expression();
-                Console.WriteLine("Parsed inner expression: " + new AstPrinter().Print(expr));
                 Consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
                 return new Grouping(expr);
             }
@@ -128,7 +126,6 @@ namespace Lox
 
         private Token Consume(TokenType type, string errorMessage)
         {
-            Console.WriteLine("In Consume");
             if (Check(type)) return Advance();
             
             throw Error(Peek(), errorMessage);
@@ -147,14 +144,12 @@ namespace Lox
 
         private bool Check(TokenType type)
         {
-            Console.WriteLine("In Check");
             if (IsAtEnd()) return false;
             return Peek().Type == type;
         }
 
         private Token Advance()
         {
-            Console.WriteLine("In Advance");
             if (!IsAtEnd()) _current++;
             return Previous();
         }

@@ -30,7 +30,7 @@ namespace Lox
 
         public string VisitGroupingExpr(Grouping expr)
         {
-            return Parenthesize("group", expr);
+            return Parenthesize("group", expr.Expression);
         }
 
         public string VisitLiteralExpr(Literal expr)
