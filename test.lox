@@ -1,5 +1,3 @@
-    "this is a string"
-    "this is
-    a multi-line
-    string"
-    "this is an unterminated string
+(1 < 3
+* 6
+!= 1)
