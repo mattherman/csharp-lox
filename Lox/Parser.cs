@@ -35,60 +35,38 @@ namespace Lox
             return Equality();
         }
 
-        private Expr Equality()
+        private Expr BinaryExpression(Func<Expr> nextExpression, params TokenType[] tokensToMatch)
         {
-            var expr = Comparison();
+            var expr = nextExpression();
 
-            while (Match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL))
+            while (Match(tokensToMatch))
             {
                 var op = Previous();
-                var right = Comparison();
-                expr = new Binary(expr, op, right);                
+                var right = nextExpression();
+                expr = new Binary(expr, op, right);
             }
 
             return expr;
+        }
+
+        private Expr Equality()
+        {
+            return BinaryExpression(Comparison, TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL);
         }
 
         private Expr Comparison()
         {
-            var expr = Addition();
-
-            while (Match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL))
-            {
-                var op = Previous();
-                var right = Addition();
-                expr = new Binary(expr, op, right);
-            }
-
-            return expr;
+            return BinaryExpression(Addition, TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL);
         }
 
         private Expr Addition()
         {
-            var expr = Multiplication();
-
-            while (Match(TokenType.MINUS, TokenType.PLUS))
-            {
-                var op = Previous();
-                var right = Multiplication();
-                expr = new Binary(expr, op, right);
-            }
-
-            return expr;
+            return BinaryExpression(Multiplication, TokenType.MINUS, TokenType.PLUS);
         }
 
         private Expr Multiplication()
         {
-            var expr = Unary();
-
-            while (Match(TokenType.SLASH, TokenType.STAR))
-            {
-                var op = Previous();
-                var right = Unary();
-                expr = new Binary(expr, op, right);
-            }
-
-            return expr;
+            return BinaryExpression(Unary, TokenType.SLASH, TokenType.STAR);
         }
 
         private Expr Unary()
