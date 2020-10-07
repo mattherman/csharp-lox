@@ -5,7 +5,9 @@ namespace Lox
 {
     public class Lox
     {
+        private static Interpreter _interpreter = new Interpreter();
         private static bool _hadError = false;
+        private static bool _hadRuntimeError = false;
 
         public static void Main(string[] args)
         {
@@ -32,6 +34,8 @@ namespace Lox
             Run(source);
             if (_hadError)
                 Environment.Exit(65);
+            if (_hadRuntimeError)
+                Environment.Exit(70);
         }
 
         private static void RunPrompt()
@@ -56,7 +60,7 @@ namespace Lox
 
             if (_hadError) return;
 
-            Console.WriteLine(new AstPrinter().Print(expression));
+            _interpreter.Interpret(expression);
         }
 
         internal static void Error(int line, string message)
@@ -74,6 +78,12 @@ namespace Lox
             {
                 Report(token.Line, $" at '{token.Lexeme}'", message);
             }
+        }
+
+        internal static void RuntimeError(RuntimeException ex)
+        {
+            Console.Error.WriteLine($"{ex.Message}\n[line {ex.Token.Line}]");
+            _hadRuntimeError = true;
         }
 
         private static void Report(int line, string where, string message)
