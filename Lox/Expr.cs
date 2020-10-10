@@ -10,6 +10,7 @@ namespace Lox
             T VisitGroupingExpr(Grouping expr);
             T VisitLiteralExpr(Literal expr);
             T VisitUnaryExpr(Unary expr);
+            T VisitVariableExpr(Variable expr);
         }
 
         public class Binary : Expr
@@ -75,6 +76,21 @@ namespace Lox
             public override T Accept<T>(IVisitor<T> visitor)
             {
                 return visitor.VisitUnaryExpr(this);
+            }
+        }
+
+        public class Variable : Expr
+        {
+            public Token Name { get; }
+
+            public Variable(Token name)
+            {
+                Name = name;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+                return visitor.VisitVariableExpr(this);
             }
         }
     }

@@ -1,6 +1,11 @@
 # Lox Grammar
 ```
-program        → statement* EOF ;
+program        → declaration* EOF ;
+
+declaration    → varDecl
+               | statement ;
+
+varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
 
 statement      → exprStmt
                | printStmt ;
@@ -15,6 +20,8 @@ addition       → multiplication ( ( "-" | "+" ) multiplication )* ;
 multiplication → unary ( ( "/" | "*" ) unary )* ;
 unary          → ( "!" | "-" ) unary
                | primary ;
-primary        → NUMBER | STRING | "false" | "true" | "nil"
-               | "(" expression ")" ;
+primary        →  "false" | "true" | "nil"
+               | NUMBER | STRING
+               | "(" expression ")" 
+               | IDENTIFIER ;
 ```

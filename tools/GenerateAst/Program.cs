@@ -19,11 +19,13 @@ namespace GenerateAst
                 "Binary   : Expr left, Token op, Expr right",
                 "Grouping : Expr expr",
                 "Literal  : object value",
-                "Unary    : Token op, Expr right"
+                "Unary    : Token op, Expr right",
+                "Variable : Token name"
             });
             DefineAst(outputDir, "Stmt", new []{
                 "Expression : Expr expr",
-                "Print      : Expr expr"
+                "Print      : Expr expr",
+                "Var        : Token name, Expr initializer"
             });
         }
 

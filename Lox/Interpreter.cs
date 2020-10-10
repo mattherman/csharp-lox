@@ -5,6 +5,8 @@ namespace Lox
 {
     public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     {
+        private Environment _environment = new Environment();
+
         public object VisitLiteralExpr(Expr.Literal expr)
         {
             return expr.Value;
@@ -31,6 +33,11 @@ namespace Lox
             }
         }
 
+        public object VisitVariableExpr(Expr.Variable expr)
+        {
+            return _environment.Get(expr.Name);
+        }
+
         public object VisitBinaryExpr(Expr.Binary expr)
         {
             var left = Evaluate(expr.Left);
@@ -38,7 +45,7 @@ namespace Lox
 
             switch (expr.Op.Type)
             {
-                case TokenType.EQUAL:
+                case TokenType.EQUAL_EQUAL:
                     return IsEqual(left, right);
                 case TokenType.BANG_EQUAL:
                     return !IsEqual(left, right);
@@ -88,6 +95,18 @@ namespace Lox
         {
             var result = Evaluate(stmt.Expr);
             Console.WriteLine(Stringify(result));
+            return null;
+        }
+
+        public object VisitVarStmt(Stmt.Var stmt)
+        {
+            object val = null;
+            if (stmt.Initializer != null)
+            {
+                val = Evaluate(stmt.Initializer);
+            }
+
+            _environment.Define(stmt.Name.Lexeme, val);
             return null;
         }
 
