@@ -3,79 +3,79 @@ namespace Lox
     public abstract class Expr
     {
         public abstract T Accept<T>(IVisitor<T> visitor);
-    }
 
-    public interface IVisitor<T>
-    {
-        T VisitBinaryExpr(Binary expr);
-        T VisitGroupingExpr(Grouping expr);
-        T VisitLiteralExpr(Literal expr);
-        T VisitUnaryExpr(Unary expr);
-    }
-
-    public class Binary : Expr
-    {
-        public Expr Left { get; }
-        public Token Op { get; }
-        public Expr Right { get; }
-
-        public Binary(Expr left, Token op, Expr right)
+        public interface IVisitor<T>
         {
-            Left = left;
-            Op = op;
-            Right = right;
+            T VisitBinaryExpr(Binary expr);
+            T VisitGroupingExpr(Grouping expr);
+            T VisitLiteralExpr(Literal expr);
+            T VisitUnaryExpr(Unary expr);
         }
 
-        public override T Accept<T>(IVisitor<T> visitor)
+        public class Binary : Expr
         {
-            return visitor.VisitBinaryExpr(this);
-        }
-    }
+            public Expr Left { get; }
+            public Token Op { get; }
+            public Expr Right { get; }
 
-    public class Grouping : Expr
-    {
-        public Expr Expression { get; }
+            public Binary(Expr left, Token op, Expr right)
+            {
+                Left = left;
+                Op = op;
+                Right = right;
+            }
 
-        public Grouping(Expr expression)
-        {
-            Expression = expression;
-        }
-
-        public override T Accept<T>(IVisitor<T> visitor)
-        {
-            return visitor.VisitGroupingExpr(this);
-        }
-    }
-
-    public class Literal : Expr
-    {
-        public object Value { get; }
-
-        public Literal(object value)
-        {
-            Value = value;
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+                return visitor.VisitBinaryExpr(this);
+            }
         }
 
-        public override T Accept<T>(IVisitor<T> visitor)
+        public class Grouping : Expr
         {
-            return visitor.VisitLiteralExpr(this);
-        }
-    }
+            public Expr Expr { get; }
 
-    public class Unary : Expr
-    {
-        public Token Op { get; }
-        public Expr Right { get; }
+            public Grouping(Expr expr)
+            {
+                Expr = expr;
+            }
 
-        public Unary(Token op, Expr right)
-        {
-            Op = op;
-            Right = right;
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+                return visitor.VisitGroupingExpr(this);
+            }
         }
 
-        public override T Accept<T>(IVisitor<T> visitor)
+        public class Literal : Expr
         {
-            return visitor.VisitUnaryExpr(this);
+            public object Value { get; }
+
+            public Literal(object value)
+            {
+                Value = value;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+                return visitor.VisitLiteralExpr(this);
+            }
+        }
+
+        public class Unary : Expr
+        {
+            public Token Op { get; }
+            public Expr Right { get; }
+
+            public Unary(Token op, Expr right)
+            {
+                Op = op;
+                Right = right;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+                return visitor.VisitUnaryExpr(this);
+            }
         }
     }
 }

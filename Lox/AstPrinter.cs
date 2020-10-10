@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Lox
 {
-    public class AstPrinter : IVisitor<string>
+    public class AstPrinter : Expr.IVisitor<string>
     {
         public string Print(Expr expr)
         {
@@ -23,22 +23,22 @@ namespace Lox
             return builder.ToString();
         }
 
-        public string VisitBinaryExpr(Binary expr)
+        public string VisitBinaryExpr(Expr.Binary expr)
         {
             return Parenthesize(expr.Op.Lexeme, expr.Left, expr.Right);
         }
 
-        public string VisitGroupingExpr(Grouping expr)
+        public string VisitGroupingExpr(Expr.Grouping expr)
         {
-            return Parenthesize("group", expr.Expression);
+            return Parenthesize("group", expr.Expr);
         }
 
-        public string VisitLiteralExpr(Literal expr)
+        public string VisitLiteralExpr(Expr.Literal expr)
         {
             return expr.Value?.ToString() ?? "nil";
         }
 
-        public string VisitUnaryExpr(Unary expr)
+        public string VisitUnaryExpr(Expr.Unary expr)
         {
             return Parenthesize(expr.Op.Lexeme, expr.Right);
         }

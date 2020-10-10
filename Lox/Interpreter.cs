@@ -2,19 +2,19 @@ using System;
 
 namespace Lox
 {
-    public class Interpreter : IVisitor<object>
+    public class Interpreter : Expr.IVisitor<object>
     {
-        public object VisitLiteralExpr(Literal expr)
+        public object VisitLiteralExpr(Expr.Literal expr)
         {
             return expr.Value;
         }
 
-        public object VisitGroupingExpr(Grouping expr)
+        public object VisitGroupingExpr(Expr.Grouping expr)
         {
-            return Evaluate(expr.Expression);
+            return Evaluate(expr.Expr);
         }
 
-        public object VisitUnaryExpr(Unary expr)
+        public object VisitUnaryExpr(Expr.Unary expr)
         {
             var right = Evaluate(expr.Right);
 
@@ -30,7 +30,7 @@ namespace Lox
             }
         }
 
-        public object VisitBinaryExpr(Binary expr)
+        public object VisitBinaryExpr(Expr.Binary expr)
         {
             var left = Evaluate(expr.Left);
             var right = Evaluate(expr.Right);

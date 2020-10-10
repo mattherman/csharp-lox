@@ -24,7 +24,7 @@ namespace Lox
             {
                 return Expression();
             }
-            catch (ParseException ex)
+            catch (ParseException)
             {
                 return null;
             }
@@ -43,7 +43,7 @@ namespace Lox
             {
                 var op = Previous();
                 var right = nextExpression();
-                expr = new Binary(expr, op, right);
+                expr = new Expr.Binary(expr, op, right);
             }
 
             return expr;
@@ -75,7 +75,7 @@ namespace Lox
             {
                 var op = Previous();
                 var right = Unary();
-                return new Unary(op, right);
+                return new Expr.Unary(op, right);
             }
 
             return Primary();
@@ -83,20 +83,20 @@ namespace Lox
 
         private Expr Primary()
         {
-            if (Match(TokenType.FALSE)) return new Literal(false);
-            if (Match(TokenType.TRUE)) return new Literal(true);
-            if (Match(TokenType.NIL)) return new Literal(null);
+            if (Match(TokenType.FALSE)) return new Expr.Literal(false);
+            if (Match(TokenType.TRUE)) return new Expr.Literal(true);
+            if (Match(TokenType.NIL)) return new Expr.Literal(null);
 
             if (Match(TokenType.NUMBER, TokenType.STRING))
             {
-                return new Literal(Previous().Literal);
+                return new Expr.Literal(Previous().Literal);
             }
 
             if (Match(TokenType.LEFT_PAREN))
             {
                 var expr = Expression();
                 Consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
-                return new Grouping(expr);
+                return new Expr.Grouping(expr);
             }
 
             throw Error(Peek(), "Expect expression.");

@@ -17,9 +17,13 @@ namespace GenerateAst
             var outputDir = args[0];
             DefineAst(outputDir, "Expr", new []{
                 "Binary   : Expr left, Token op, Expr right",
-                "Grouping : Expr expression",
+                "Grouping : Expr expr",
                 "Literal  : object value",
                 "Unary    : Token op, Expr right"
+            });
+            DefineAst(outputDir, "Stmt", new []{
+                "Expression : Expr expr",
+                "Print      : Expr expr"
             });
         }
 
@@ -30,7 +34,10 @@ namespace GenerateAst
             lines.Add("namespace Lox");
             lines.Add("{");
             
-            DefineBaseClass(lines, baseName);
+            lines.Add($"\tpublic abstract class {baseName}");
+            lines.Add("\t{");
+            lines.Add("\t\tpublic abstract T Accept<T>(IVisitor<T> visitor);");
+            
             DefineVisitor(lines, baseName, types);
 
             foreach (var type in types)
@@ -42,6 +49,8 @@ namespace GenerateAst
                 lines.Add(string.Empty);
                 DefineType(lines, baseName, className, fields);
             }
+            
+            lines.Add("\t}");
 
             lines.Add("}");
 
@@ -52,23 +61,23 @@ namespace GenerateAst
         private static void DefineVisitor(IList<string> lines, string baseName, IEnumerable<string> types)
         {
             lines.Add(string.Empty);
-            lines.Add("\tpublic interface IVisitor<T>");
-            lines.Add("\t{");
+            lines.Add("\t\tpublic interface IVisitor<T>");
+            lines.Add("\t\t{");
 
             foreach (var type in types)
             {
                 var typeParts = type.Split(":");
                 var typeName = typeParts[0].Trim();
-                lines.Add($"\t\tT Visit{typeName}{baseName}({typeName} {baseName.ToLower()});");
+                lines.Add($"\t\t\tT Visit{typeName}{baseName}({typeName} {baseName.ToLower()});");
             }
 
-            lines.Add("\t}");
+            lines.Add("\t\t}");
         }
 
         private static void DefineType(IList<string> lines, string baseName, string className, string fieldList)
         {
-            lines.Add($"\tpublic class {className} : {baseName}");
-            lines.Add("\t{");
+            lines.Add($"\t\tpublic class {className} : {baseName}");
+            lines.Add("\t\t{");
             
             var fields = fieldList
                 .Split(",")
@@ -77,35 +86,27 @@ namespace GenerateAst
 
             foreach (var field in fields)
             {
-                lines.Add($"\t\tpublic {field.Type} {field.PascalCaseIdentifier} {{ get; }}");
+                lines.Add($"\t\t\tpublic {field.Type} {field.PascalCaseIdentifier} {{ get; }}");
             }
 
             var parameterList = String.Join(", ", fields.Select(f => f.ToParam()));
             lines.Add(string.Empty);
-            lines.Add($"\t\tpublic {className}({parameterList})");
-            lines.Add("\t\t{");
+            lines.Add($"\t\t\tpublic {className}({parameterList})");
+            lines.Add("\t\t\t{");
             
             foreach (var field in fields)
             {
-                lines.Add($"\t\t\t{field.PascalCaseIdentifier} = {field.CamelCaseIdentifier};");
+                lines.Add($"\t\t\t\t{field.PascalCaseIdentifier} = {field.CamelCaseIdentifier};");
             }
 
-            lines.Add("\t\t}");
+            lines.Add("\t\t\t}");
 
             lines.Add(string.Empty);
-            lines.Add("\t\tpublic override T Accept<T>(IVisitor<T> visitor)");
-            lines.Add("\t\t{");
-            lines.Add($"\t\t\treturn visitor.Visit{className}{baseName}(this);");
+            lines.Add("\t\t\tpublic override T Accept<T>(IVisitor<T> visitor)");
+            lines.Add("\t\t\t{");
+            lines.Add($"\t\t\t\treturn visitor.Visit{className}{baseName}(this);");
+            lines.Add("\t\t\t}");
             lines.Add("\t\t}");
-            lines.Add("\t}");
-        }
-
-        private static void DefineBaseClass(IList<string> lines, string baseName)
-        {
-            lines.Add($"\tpublic abstract class {baseName}");
-            lines.Add("\t{");
-            lines.Add("\t\tpublic abstract T Accept<T>(IVisitor<T> visitor);");
-            lines.Add("\t}");
         }
     }
 
