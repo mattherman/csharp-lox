@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 
 namespace Lox
 {
-    public class Interpreter : Expr.IVisitor<object>
+    public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     {
         public object VisitLiteralExpr(Expr.Literal expr)
         {
@@ -77,6 +78,19 @@ namespace Lox
             }
         }
 
+        public object VisitExpressionStmt(Stmt.Expression stmt)
+        {
+            Evaluate(stmt.Expr);
+            return null;
+        }
+
+        public object VisitPrintStmt(Stmt.Print stmt)
+        {
+            var result = Evaluate(stmt.Expr);
+            Console.WriteLine(Stringify(result));
+            return null;
+        }
+
         private void CheckNumberOperand(Token op, object operand)
         {
             if (operand is Double) return;
@@ -114,12 +128,19 @@ namespace Lox
             return expr.Accept(this);
         }
 
-        public void Interpret(Expr expr)
+        private void Execute(Stmt statement)
+        {
+            statement.Accept(this);
+        }
+
+        public void Interpret(IList<Stmt> statements)
         {
             try
             {
-                var result = Evaluate(expr);
-                Console.WriteLine(Stringify(result));
+                foreach (var statement in statements)
+                {
+                    Execute(statement);
+                }
             }
             catch (RuntimeException ex)
             {

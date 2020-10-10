@@ -18,16 +18,34 @@ namespace Lox
             _tokens = tokens;
         }
 
-        public Expr Parse()
+        public IList<Stmt> Parse()
         {
-            try
+            var statements = new List<Stmt>();
+            while (!IsAtEnd())
             {
-                return Expression();
+                statements.Add(Statement());
             }
-            catch (ParseException)
-            {
-                return null;
-            }
+            return statements;
+        }
+
+        private Stmt Statement()
+        {
+            if (Match(TokenType.PRINT)) return PrintStatement();
+            return ExpressionStatement();
+        }
+
+        private Stmt PrintStatement()
+        {
+            var expr = Expression();
+            Consume(TokenType.SEMICOLON, "Expect ';' after value.");
+            return new Stmt.Print(expr);
+        }
+
+        private Stmt ExpressionStatement()
+        {
+            var expr = Expression();
+            Consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+            return new Stmt.Expression(expr);
         }
 
         private Expr Expression()
