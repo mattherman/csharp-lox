@@ -6,9 +6,20 @@ namespace Lox
     {
         private readonly IDictionary<string, object> values = new Dictionary<string, object>();
 
-        public void Define(string name, object val)
+        public void Define(Token name, object val)
         {
-            values[name] = val;
+            values[name.Lexeme] = val;
+        }
+
+        public void Assign(Token name, object val)
+        {
+            if (values.ContainsKey(name.Lexeme))
+            {
+                values[name.Lexeme] = val;
+                return;
+            }
+
+            throw new RuntimeException(name, $"Undefined variable {name.Lexeme}.");
         }
 
         public object Get(Token name)

@@ -23,6 +23,11 @@ namespace Lox
             return builder.ToString();
         }
 
+        public string VisitAssignExpr(Expr.Assign expr)
+        {
+            return Parenthesize(expr.Name.Lexeme, expr.Value);
+        }
+
         public string VisitBinaryExpr(Expr.Binary expr)
         {
             return Parenthesize(expr.Op.Lexeme, expr.Left, expr.Right);

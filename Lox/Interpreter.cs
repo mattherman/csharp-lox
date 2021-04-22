@@ -38,6 +38,13 @@ namespace Lox
             return _environment.Get(expr.Name);
         }
 
+        public object VisitAssignExpr(Expr.Assign expr)
+        {
+            var val = Evaluate(expr.Value);
+            _environment.Assign(expr.Name, val);
+            return val;
+        }
+
         public object VisitBinaryExpr(Expr.Binary expr)
         {
             var left = Evaluate(expr.Left);
@@ -97,7 +104,7 @@ namespace Lox
             Console.WriteLine(Stringify(result));
             return null;
         }
-
+ 
         public object VisitVarStmt(Stmt.Var stmt)
         {
             object val = null;
@@ -106,7 +113,7 @@ namespace Lox
                 val = Evaluate(stmt.Initializer);
             }
 
-            _environment.Define(stmt.Name.Lexeme, val);
+            _environment.Define(stmt.Name, val);
             return null;
         }
 

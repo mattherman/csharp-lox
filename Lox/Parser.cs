@@ -78,7 +78,27 @@ namespace Lox
 
         private Expr Expression()
         {
-            return Equality();
+            return Assignment();
+        }
+
+        private Expr Assignment()
+        {
+            var expr = Equality();
+
+            if (Match(TokenType.EQUAL))
+            {
+                var equal = Previous();
+                var val = Assignment();
+
+                if (expr is Expr.Variable varExpr)
+                {
+                    return new Expr.Assign(varExpr.Name, val);
+                }
+
+                Error(equal, "Invalid assignment target.");
+            }
+
+            return expr;
         }
 
         private Expr BinaryExpression(Func<Expr> nextExpression, params TokenType[] tokensToMatch)
