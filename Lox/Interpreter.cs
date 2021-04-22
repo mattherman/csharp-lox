@@ -73,7 +73,7 @@ namespace Lox
                 case TokenType.PLUS:
                     if (left is Double && right is Double)
                     {
-                        return (double)left + (double) right;
+                        return (double)left + (double)right;
                     }
                     if (left is String && right is String)
                     {
