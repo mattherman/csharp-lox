@@ -77,7 +77,7 @@ namespace Lox
                 case TokenType.STAR:
                     CheckNumberOperands(expr.Op, left, right);
                     return (double)left * (double)right;
-                case TokenType.PLUS:
+               case TokenType.PLUS:
                     if (left is Double && right is Double)
                     {
                         return (double)left + (double)right;
@@ -96,6 +96,29 @@ namespace Lox
         {
             Evaluate(stmt.Expr);
             return null;
+        }
+
+        public object VisitBlockStmt(Stmt.Block stmt)
+        {
+            ExecuteBlock(stmt.Statements, new Environment(_environment));
+            return null;
+        }
+
+        private void ExecuteBlock(List<Stmt> statements, Environment environment)
+        {
+            var previousEnvironment = _environment;
+            try
+            {
+                _environment = environment;
+                foreach (var statement in statements)
+                {
+                    Execute(statement);
+                }
+            }
+            finally
+            {
+                _environment = previousEnvironment;
+            }
         }
 
         public object VisitPrintStmt(Stmt.Print stmt)

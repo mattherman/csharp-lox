@@ -15,24 +15,45 @@ namespace GenerateAst
                 Environment.Exit(64);
             }
             var outputDir = args[0];
-            DefineAst(outputDir, "Expr", new []{
-                "Assign   : Token name, Expr value",
-                "Binary   : Expr left, Token op, Expr right",
-                "Grouping : Expr expr",
-                "Literal  : object value",
-                "Unary    : Token op, Expr right",
-                "Variable : Token name"
-            });
-            DefineAst(outputDir, "Stmt", new []{
-                "Expression : Expr expr",
-                "Print      : Expr expr",
-                "Var        : Token name, Expr initializer"
-            });
+            DefineAst(
+                outputDir, 
+                "Expr",
+                new [] {
+                    "Assign   : Token name, Expr value",
+                    "Binary   : Expr left, Token op, Expr right",
+                    "Grouping : Expr expr",
+                    "Literal  : object value",
+                    "Unary    : Token op, Expr right",
+                    "Variable : Token name"
+                }
+            );
+            DefineAst(
+                outputDir,
+                "Stmt",
+                new [] {
+                    "Block      : List<Stmt> statements",
+                    "Expression : Expr expr",
+                    "Print      : Expr expr",
+                    "Var        : Token name, Expr initializer"
+                },
+                new [] {
+                    "System.Collections.Generic"
+                }
+            );
         }
 
-        private static void DefineAst(string outputDir, string baseName, IEnumerable<string> types)
+        private static void DefineAst(string outputDir, string baseName, IEnumerable<string> types, IEnumerable<string> dependentNamespaces = null)
         {
             var lines = new List<string>();
+
+            if (dependentNamespaces != null)
+            {
+                foreach (var dependentNamespace in dependentNamespaces)
+                {
+                    lines.Add($"using {dependentNamespace};");
+                } 
+                lines.Add(string.Empty);
+            }
 
             lines.Add("namespace Lox");
             lines.Add("{");
