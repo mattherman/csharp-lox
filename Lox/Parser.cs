@@ -58,6 +58,7 @@ namespace Lox
 
         private Stmt Statement()
         {
+            if (Match(TokenType.FOR)) return ForStatement();
             if (Match(TokenType.IF)) return IfStatement();
             if (Match(TokenType.PRINT)) return PrintStatement();
             if (Match(TokenType.WHILE)) return WhileStatement();
@@ -66,11 +67,74 @@ namespace Lox
             return ExpressionStatement();
         }
 
+        private Stmt ForStatement()
+        {
+            Consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+
+            Stmt initializer;
+            if (Match(TokenType.SEMICOLON))
+            {
+                initializer = null;
+            }
+            else if (Match(TokenType.VAR))
+            {
+                initializer = VarDeclaration();
+            }
+            else
+            {
+                initializer = ExpressionStatement();
+            }
+
+            Expr condition = null;
+            if (!Check(TokenType.SEMICOLON))
+            {
+                condition = Expression();
+            }
+            Consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
+
+            Expr increment = null;
+            if (!Check(TokenType.RIGHT_PAREN))
+            {
+                increment = Expression();
+            }
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after 'for' clauses.");
+
+            var body = Statement();
+
+            // De-sugaring the for loop into a while loop
+            //
+            // Example:
+            // for (var a = 0; a < 10; a = a + 1) { <body>; }
+            // becomes..
+            // var a = 0;
+            // while (a < 10) { <body>; a = a + 1; }
+
+            // If there is an increment, create a new block with the increment appended to the loop body
+            if (increment != null)
+            {
+                body = new Stmt.Block(new List<Stmt> { body, new Stmt.Expression(increment) });
+            }
+
+            // If there was no condition, default it to 'true'
+            condition ??= new Expr.Literal(true);
+
+            // Transform body into a while loop with condition
+            body = new Stmt.While(condition, body);
+
+            // If there was an initializer, create a new block with the initializer and generated while loop
+            if (initializer != null)
+            {
+                body = new Stmt.Block(new List<Stmt> { initializer, body });
+            }
+
+            return body;
+        }
+
         private Stmt IfStatement()
         {
-            Consume(TokenType.LEFT_PAREN, "Expect '(' after if.");
+            Consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
             var expr = Expression();
-            Consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.");
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after 'if' condition.");
 
             var thenBranch = Statement();
             Stmt elseBranch = null;
@@ -91,9 +155,9 @@ namespace Lox
 
         private Stmt WhileStatement()
         {
-            Consume(TokenType.LEFT_PAREN, "Expect '(' after while.");
+            Consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
             var expr = Expression();
-            Consume(TokenType.RIGHT_PAREN, "Expect ')' after while condition.");
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after 'while' condition.");
 
             var body = Statement();
 
