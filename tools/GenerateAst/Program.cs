@@ -36,7 +36,8 @@ namespace GenerateAst
                     "Block      : List<Stmt> statements",
                     "Expression : Expr expr",
                     "Print      : Expr expr",
-                    "Var        : Token name, Expr initializer"
+                    "Var        : Token name, Expr initializer",
+                    "While      : Expr condition, Stmt body"
                 },
                 new [] {
                     "System.Collections.Generic"

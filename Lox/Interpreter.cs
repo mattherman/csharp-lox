@@ -127,6 +127,15 @@ namespace Lox
             return null;
         }
 
+        public object VisitWhileStmt(Stmt.While stmt)
+        {
+            while (IsTruthy(Evaluate(stmt.Condition)))
+            {
+                Execute(stmt.Body);
+            }
+            return null;
+        }
+
         public object VisitBlockStmt(Stmt.Block stmt)
         {
             ExecuteBlock(stmt.Statements, new Environment(_environment));

@@ -10,10 +10,12 @@ varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
 statement      → exprStmt
                | ifStmt
                | printStmt
+               | whileStmt
                | block;
 
 block          → "{" declaration* "}" ;
 ifStmt         → "if" "(" expression ")" statement ( "else" statement)? ;
+whileStmt      → "while" "(" expression ")" statement ;
 exprStmt       → expression ";" ;
 printStmt      → "print" expression ";" ;
 
