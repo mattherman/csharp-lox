@@ -12,6 +12,22 @@ namespace Lox
             return expr.Value;
         }
 
+        public object VisitLogicalExpr(Expr.Logical expr)
+        {
+            var left = Evaluate(expr.Left);
+
+            if (expr.Op.Type == TokenType.OR)
+            {
+                if (IsTruthy(left)) return left;
+            }
+            else
+            {
+                if (!IsTruthy(left)) return left;
+            }
+
+            return Evaluate(expr.Right);
+        }
+
         public object VisitGroupingExpr(Expr.Grouping expr)
         {
             return Evaluate(expr.Expr);

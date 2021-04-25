@@ -115,7 +115,7 @@ namespace Lox
 
         private Expr Assignment()
         {
-            var expr = Equality();
+            var expr = Or();
 
             if (Match(TokenType.EQUAL))
             {
@@ -131,6 +131,30 @@ namespace Lox
             }
 
             return expr;
+        }
+
+        private Expr LogicalExpression(Func<Expr> nextExpression, TokenType tokenToMatch)
+        {
+            var expr = nextExpression();
+
+            while (Match(tokenToMatch))
+            {
+                var op = Previous();
+                var right = nextExpression();
+                expr = new Expr.Logical(expr, op, right);
+            }
+
+            return expr;
+        }
+
+        private Expr Or()
+        {
+            return LogicalExpression(And, TokenType.OR);
+        }
+
+        private Expr And()
+        {
+            return LogicalExpression(Equality, TokenType.AND);
         }
 
         private Expr BinaryExpression(Func<Expr> nextExpression, params TokenType[] tokensToMatch)

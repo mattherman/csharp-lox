@@ -52,5 +52,10 @@ namespace Lox
         {
             return expr.Name.Lexeme;
         }
+
+        public string VisitLogicalExpr(Expr.Logical expr)
+        {
+            return Parenthesize(expr.Op.Lexeme, expr.Left, expr.Right);
+        }
     }
 }
