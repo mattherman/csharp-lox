@@ -31,6 +31,7 @@ namespace GenerateAst
                 outputDir,
                 "Stmt",
                 new [] {
+                    "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
                     "Block      : List<Stmt> statements",
                     "Expression : Expr expr",
                     "Print      : Expr expr",

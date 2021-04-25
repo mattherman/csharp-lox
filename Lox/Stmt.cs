@@ -8,10 +8,30 @@ namespace Lox
 
         public interface IVisitor<T>
         {
+            T VisitIfStmt(If stmt);
             T VisitBlockStmt(Block stmt);
             T VisitExpressionStmt(Expression stmt);
             T VisitPrintStmt(Print stmt);
             T VisitVarStmt(Var stmt);
+        }
+
+        public class If : Stmt
+        {
+            public Expr Condition { get; }
+            public Stmt ThenBranch { get; }
+            public Stmt ElseBranch { get; }
+
+            public If(Expr condition, Stmt thenBranch, Stmt elseBranch)
+            {
+                Condition = condition;
+                ThenBranch = thenBranch;
+                ElseBranch = elseBranch;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+                return visitor.VisitIfStmt(this);
+            }
         }
 
         public class Block : Stmt

@@ -98,6 +98,19 @@ namespace Lox
             return null;
         }
 
+        public object VisitIfStmt(Stmt.If stmt)
+        {
+            if (IsTruthy(Evaluate(stmt.Condition)))
+            {
+                Execute(stmt.ThenBranch);
+            }
+            else if (stmt.ElseBranch != null)
+            {
+                Execute(stmt.ElseBranch);
+            }
+            return null;
+        }
+
         public object VisitBlockStmt(Stmt.Block stmt)
         {
             ExecuteBlock(stmt.Statements, new Environment(_environment));
