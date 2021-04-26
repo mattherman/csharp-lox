@@ -19,7 +19,12 @@ namespace Lox
 
         public void Define(Token name, object val)
         {
-            values[name.Lexeme] = val;
+            Define(name.Lexeme, val);
+        }
+
+        public void Define(string name, object val)
+        {
+            values[name] = val;
         }
 
         public void Assign(Token name, object val)

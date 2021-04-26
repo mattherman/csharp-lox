@@ -6,7 +6,13 @@ namespace Lox
 {
     public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     {
-        private Environment _environment = new Environment();
+        private static readonly Environment _globals = new Environment();
+        private Environment _environment = _globals;
+
+        public Interpreter()
+        {
+            _globals.Define("clock", new Clock()); 
+        }
 
         public object VisitLiteralExpr(Expr.Literal expr)
         {
@@ -114,7 +120,7 @@ namespace Lox
             var callee = Evaluate(expr.Callee);
             var arguments = expr.Arguments.Select(Evaluate).ToList();
 
-            var function = callee as LoxCallable;
+            var function = callee as ILoxCallable;
             if (function == null)
             {
                 throw new RuntimeException(expr.Paren, "Can only call functions and classes.");
