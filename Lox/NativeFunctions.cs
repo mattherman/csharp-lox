@@ -9,7 +9,7 @@ namespace Lox
 
         public object Call(Interpreter interpreter, List<object> arguments)
         {
-            return DateTime.Now.Ticks / (decimal)TimeSpan.TicksPerSecond;
+            return DateTime.Now.Ticks / (double)TimeSpan.TicksPerSecond;
         }
 
         public override string ToString()
