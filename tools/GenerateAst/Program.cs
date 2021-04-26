@@ -21,11 +21,15 @@ namespace GenerateAst
                 new [] {
                     "Assign   : Token name, Expr value",
                     "Binary   : Expr left, Token op, Expr right",
+                    "Call     : Expr callee, Token paren, List<Expr> arguments",
                     "Grouping : Expr expr",
                     "Literal  : object value",
                     "Logical  : Expr left, Token op, Expr right",
                     "Unary    : Token op, Expr right",
                     "Variable : Token name"
+                },
+                new [] {
+                    "System.Collections.Generic"
                 }
             );
             DefineAst(

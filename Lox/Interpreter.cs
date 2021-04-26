@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lox
 {
@@ -106,6 +107,24 @@ namespace Lox
                 default:
                     return null;
             }
+        }
+
+        public object VisitCallExpr(Expr.Call expr)
+        {
+            var callee = Evaluate(expr.Callee);
+            var arguments = expr.Arguments.Select(Evaluate).ToList();
+
+            var function = callee as LoxCallable;
+            if (function == null)
+            {
+                throw new RuntimeException(expr.Paren, "Can only call functions and classes.");
+            }
+            if (arguments.Count != function.Arity)
+            {
+                throw new RuntimeException(expr.Paren, $"Expected {function.Arity} arguments but got {arguments.Count}.");
+            }
+
+            return function.Call(this, arguments);
         }
 
         public object VisitExpressionStmt(Stmt.Expression stmt)

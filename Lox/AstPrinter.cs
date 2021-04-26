@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text;
 
 namespace Lox
@@ -56,6 +57,12 @@ namespace Lox
         public string VisitLogicalExpr(Expr.Logical expr)
         {
             return Parenthesize(expr.Op.Lexeme, expr.Left, expr.Right);
+        }
+
+        public string VisitCallExpr(Expr.Call expr)
+        {
+            var expressions = new []{ expr.Callee }.Concat(expr.Arguments);
+            return Parenthesize("call", expressions.ToArray());
         }
     }
 }
