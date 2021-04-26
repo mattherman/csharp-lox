@@ -12,9 +12,6 @@ namespace Lox
             return DateTime.Now.Ticks / (double)TimeSpan.TicksPerSecond;
         }
 
-        public override string ToString()
-        {
-            return "<native fn>";
-        }
+        public override string ToString() => "<native fn>";
     }
 }
