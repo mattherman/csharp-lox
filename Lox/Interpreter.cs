@@ -6,12 +6,13 @@ namespace Lox
 {
     public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     {
-        private static readonly Environment _globals = new Environment();
-        private Environment _environment = _globals;
+        public readonly Environment Globals = new Environment();
+        private Environment _environment;
 
         public Interpreter()
         {
-            _globals.Define("clock", new Clock()); 
+            Globals.Define("clock", new Clock()); 
+            _environment = Globals;
         }
 
         public object VisitLiteralExpr(Expr.Literal expr)
@@ -167,7 +168,7 @@ namespace Lox
             return null;
         }
 
-        private void ExecuteBlock(List<Stmt> statements, Environment environment)
+        public void ExecuteBlock(List<Stmt> statements, Environment environment)
         {
             var previousEnvironment = _environment;
             try
@@ -205,6 +206,8 @@ namespace Lox
 
         public object VisitFunctionStmt(Stmt.Function stmt)
         {
+            var function = new LoxFunction(stmt);
+            _environment.Define(stmt.Name.Lexeme, function);
             return null;
         }
 
