@@ -203,6 +203,11 @@ namespace Lox
             return null;
         }
 
+        public object VisitFunctionStmt(Stmt.Function stmt)
+        {
+            return null;
+        }
+
         private void CheckNumberOperand(Token op, object operand)
         {
             if (operand is Double) return;

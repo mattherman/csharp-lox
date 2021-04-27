@@ -41,7 +41,8 @@ namespace GenerateAst
                     "Expression : Expr expr",
                     "Print      : Expr expr",
                     "Var        : Token name, Expr initializer",
-                    "While      : Expr condition, Stmt body"
+                    "While      : Expr condition, Stmt body",
+                    "Function   : Token name, List<Token> parameters, List<Stmt> body"
                 },
                 new [] {
                     "System.Collections.Generic"

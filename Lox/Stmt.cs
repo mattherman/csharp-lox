@@ -14,6 +14,7 @@ namespace Lox
             T VisitPrintStmt(Print stmt);
             T VisitVarStmt(Var stmt);
             T VisitWhileStmt(While stmt);
+            T VisitFunctionStmt(Function stmt);
         }
 
         public class If : Stmt
@@ -111,6 +112,25 @@ namespace Lox
             public override T Accept<T>(IVisitor<T> visitor)
             {
                 return visitor.VisitWhileStmt(this);
+            }
+        }
+
+        public class Function : Stmt
+        {
+            public Token Name { get; }
+            public List<Token> Parameters { get; }
+            public List<Stmt> Body { get; }
+
+            public Function(Token name, List<Token> parameters, List<Stmt> body)
+            {
+                Name = name;
+                Parameters = parameters;
+                Body = body;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+                return visitor.VisitFunctionStmt(this);
             }
         }
     }

@@ -32,6 +32,7 @@ namespace Lox
         {
             try
             {
+                if (Match(TokenType.FUN)) return Function("function");
                 if (Match(TokenType.VAR)) return VarDeclaration();
                 return Statement();
             }
@@ -40,6 +41,32 @@ namespace Lox
                 Synchronize();
                 return null;
             }
+        }
+
+        private Stmt Function(string kind)
+        {
+            var name = Consume(TokenType.IDENTIFIER, $"Expect {kind} name.");
+            var parameters = new List<Token>();
+
+            Consume(TokenType.LEFT_PAREN, $"Expect '(' after {kind} name.");
+            if (!Check(TokenType.RIGHT_PAREN))
+            {
+                do
+                {
+                    if (parameters.Count >= 255)
+                    {
+                        Error(Peek(), "Can't have more than 255 parameters.");
+                    }
+                    parameters.Add(Consume(TokenType.IDENTIFIER, "Expect parameter name."));
+                } while (Match(TokenType.COMMA));
+            }
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+
+            // Consume the '{' before calling Block since it assumes the brace token has already been matched
+            Consume(TokenType.LEFT_BRACE, $"Expect '{{' before {kind} body.");
+            var body = Block();
+
+            return new Stmt.Function(name, parameters, body);
         }
 
         private Stmt VarDeclaration()
