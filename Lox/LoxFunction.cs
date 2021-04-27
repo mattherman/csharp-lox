@@ -22,7 +22,15 @@ namespace Lox
                 environment.Define(parameter.Lexeme, argument);
             } 
 
-            interpreter.ExecuteBlock(_declaration.Body, environment);
+            try
+            {
+                interpreter.ExecuteBlock(_declaration.Body, environment);
+            }
+            catch (Return returnValue)
+            {
+                return returnValue.Value;
+            }
+
             return null;
         }
 

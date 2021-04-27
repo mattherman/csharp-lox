@@ -15,12 +15,14 @@ varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
 statement      → exprStmt
                | ifStmt
                | printStmt
+               | returnStmt
                | whileStmt
                | block;
 
 block          → "{" declaration* "}" ;
 ifStmt         → "if" "(" expression ")" statement ( "else" statement)? ;
 whileStmt      → "while" "(" expression ")" statement ;
+returnStmt     → "return" expression? ";" ;
 forStmt        → "for" "(" ( varDecl | exprStmt | ";" ) expression? ";" expression? ")" statement ;
 exprStmt       → expression ";" ;
 printStmt      → "print" expression ";" ;

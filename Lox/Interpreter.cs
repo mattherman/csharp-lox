@@ -191,6 +191,12 @@ namespace Lox
             Console.WriteLine(Stringify(result));
             return null;
         }
+
+        public object VisitReturnStmt(Stmt.Return stmt)
+        {
+            var returnValue = stmt.Value != null ? Evaluate(stmt.Value) : null;
+            throw new Return(returnValue);
+        }
  
         public object VisitVarStmt(Stmt.Var stmt)
         {

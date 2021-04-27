@@ -88,6 +88,7 @@ namespace Lox
             if (Match(TokenType.FOR)) return ForStatement();
             if (Match(TokenType.IF)) return IfStatement();
             if (Match(TokenType.PRINT)) return PrintStatement();
+            if (Match(TokenType.RETURN)) return ReturnStatement();
             if (Match(TokenType.WHILE)) return WhileStatement();
             if (Match(TokenType.LEFT_BRACE)) return new Stmt.Block(Block());
 
@@ -189,6 +190,19 @@ namespace Lox
             var body = Statement();
 
             return new Stmt.While(expr, body);
+        }
+
+        private Stmt ReturnStatement()
+        {
+            var keyword = Previous();
+            Expr value = null;
+            if (!Check(TokenType.SEMICOLON))
+            {
+                value = Expression();
+            }
+            Consume(TokenType.SEMICOLON, "Expect ';' after return value.");
+
+            return new Stmt.Return(keyword, value);
         }
 
         private List<Stmt> Block()

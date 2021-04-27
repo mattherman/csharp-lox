@@ -42,6 +42,7 @@ namespace GenerateAst
                     "Print      : Expr expr",
                     "Var        : Token name, Expr initializer",
                     "While      : Expr condition, Stmt body",
+                    "Return     : Token keyword, Expr value",
                     "Function   : Token name, List<Token> parameters, List<Stmt> body"
                 },
                 new [] {
