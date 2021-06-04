@@ -5,7 +5,7 @@ namespace Lox
     public class Environment
     {
         private readonly Environment _enclosing;
-        private readonly IDictionary<string, object> values = new Dictionary<string, object>();
+        private readonly IDictionary<string, object> _values = new Dictionary<string, object>();
 
         public Environment()
         {
@@ -24,29 +24,28 @@ namespace Lox
 
         public void Define(string name, object val)
         {
-            values[name] = val;
+            _values[name] = val;
         }
 
         public void Assign(Token name, object val)
         {
-            if (values.ContainsKey(name.Lexeme))
+            if (_values.ContainsKey(name.Lexeme))
             {
-                values[name.Lexeme] = val;
-                return;
-            }
-
-            if (_enclosing != null)
-            {
-                _enclosing.Assign(name, val);
+                _values[name.Lexeme] = val;
                 return;
             }
 
             throw new RuntimeException(name, $"Undefined variable {name.Lexeme}.");
         }
 
+        public void AssignAt(int depth, Token name, object val)
+        {
+            Ancestor(depth)._values[name.Lexeme] = val;
+        }
+
         public object Get(Token name)
         {
-            var found = values.TryGetValue(name.Lexeme, out var val);
+            var found = _values.TryGetValue(name.Lexeme, out var val);
 
             if (found)
             {
@@ -56,12 +55,23 @@ namespace Lox
                 }
                 return val;
             }
-            else if (_enclosing != null)
-            {
-                return _enclosing.Get(name);
-            }
 
             throw new RuntimeException(name, $"Undefined variable '{name.Lexeme}'.");
+        }
+
+        public object GetAt(int depth, Token name)
+        {
+            return Ancestor(depth)._values[name.Lexeme];
+        }
+
+        private Environment Ancestor(int depth)
+        {
+            var environment = this;
+            for (var i = 0; i < depth; i++)
+            {
+                environment = environment._enclosing;
+            }
+            return environment;
         }
     }
 }

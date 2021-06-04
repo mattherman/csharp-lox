@@ -8,6 +8,7 @@ namespace Lox
     {
         public readonly Environment Globals = new Environment();
         private Environment _environment;
+        private Dictionary<Expr, int> _locals = new Dictionary<Expr, int>();
 
         public Interpreter()
         {
@@ -57,15 +58,33 @@ namespace Lox
             }
         }
 
+        private object LookUpVariable(Token name, Expr expr)
+        {
+            var found = _locals.TryGetValue(expr, out var depth);
+            if (found)
+            {
+                return _environment.GetAt(depth, name);
+            }
+            return Globals.Get(name);
+        }
+
         public object VisitVariableExpr(Expr.Variable expr)
         {
-            return _environment.Get(expr.Name);
+            return LookUpVariable(expr.Name, expr);
         }
 
         public object VisitAssignExpr(Expr.Assign expr)
         {
             var val = Evaluate(expr.Value);
-            _environment.Assign(expr.Name, val);
+            var found = _locals.TryGetValue(expr, out var depth);
+            if (found)
+            {
+                _environment.AssignAt(depth, expr.Name, val);
+            }
+            else
+            {
+                Globals.Assign(expr.Name, val);
+            }
             return val;
         }
 
@@ -257,6 +276,11 @@ namespace Lox
         private void Execute(Stmt statement)
         {
             statement.Accept(this);
+        }
+
+        public void Resolve(Expr expr, int depth)
+        {
+            _locals.Add(expr, depth);
         }
 
         public void Interpret(IList<Stmt> statements)
