@@ -6,14 +6,14 @@ namespace Lox
 {
     public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     {
-        public readonly Environment Globals = new Environment();
+        private readonly Environment _globals = new Environment();
         private Environment _environment;
         private Dictionary<Expr, int> _locals = new Dictionary<Expr, int>();
 
         public Interpreter()
         {
-            Globals.Define("clock", new Clock()); 
-            _environment = Globals;
+            _globals.Define("clock", new Clock()); 
+            _environment = _globals;
         }
 
         public object VisitLiteralExpr(Expr.Literal expr)
@@ -65,7 +65,7 @@ namespace Lox
             {
                 return _environment.GetAt(depth, name);
             }
-            return Globals.Get(name);
+            return _globals.Get(name);
         }
 
         public object VisitVariableExpr(Expr.Variable expr)
@@ -83,7 +83,7 @@ namespace Lox
             }
             else
             {
-                Globals.Assign(expr.Name, val);
+                _globals.Assign(expr.Name, val);
             }
             return val;
         }
