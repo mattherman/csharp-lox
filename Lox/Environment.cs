@@ -40,7 +40,7 @@ namespace Lox
 
         public void AssignAt(int depth, Token name, object val)
         {
-            Ancestor(depth)._values[name.Lexeme] = val;
+            Ancestor(depth).Assign(name, val);
         }
 
         public object Get(Token name)
@@ -61,7 +61,7 @@ namespace Lox
 
         public object GetAt(int depth, Token name)
         {
-            return Ancestor(depth)._values[name.Lexeme];
+            return Ancestor(depth).Get(name);
         }
 
         private Environment Ancestor(int depth)
