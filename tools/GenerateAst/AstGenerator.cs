@@ -5,8 +5,13 @@ using System.Linq;
 
 namespace GenerateAst
 {
-    class Program
+    class AstGenerator
     {
+        private const string Indent = "    ";
+        private static readonly string DoubleIndent = Indent.Repeat(2);
+        private static readonly string TripleIndent = Indent.Repeat(3);
+        private static readonly string QuadIndent = Indent.Repeat(4);
+
         static void Main(string[] args)
         {
             if (args.Length != 1)
@@ -38,6 +43,7 @@ namespace GenerateAst
                 new [] {
                     "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
                     "Block      : List<Stmt> statements",
+                    "Class      : Token name, List<Stmt.Function> methods",
                     "Expression : Expr expr",
                     "Print      : Expr expr",
                     "Var        : Token name, Expr initializer",
@@ -67,9 +73,9 @@ namespace GenerateAst
             lines.Add("namespace Lox");
             lines.Add("{");
             
-            lines.Add($"\tpublic abstract class {baseName}");
-            lines.Add("\t{");
-            lines.Add("\t\tpublic abstract T Accept<T>(IVisitor<T> visitor);");
+            lines.Add($"{Indent}public abstract class {baseName}");
+            lines.Add($"{Indent}{{");
+            lines.Add($"{DoubleIndent}public abstract T Accept<T>(IVisitor<T> visitor);");
             
             DefineVisitor(lines, baseName, types);
 
@@ -83,7 +89,7 @@ namespace GenerateAst
                 DefineType(lines, baseName, className, fields);
             }
             
-            lines.Add("\t}");
+            lines.Add($"{Indent}}}");
 
             lines.Add("}");
 
@@ -94,23 +100,23 @@ namespace GenerateAst
         private static void DefineVisitor(IList<string> lines, string baseName, IEnumerable<string> types)
         {
             lines.Add(string.Empty);
-            lines.Add("\t\tpublic interface IVisitor<T>");
-            lines.Add("\t\t{");
+            lines.Add($"{DoubleIndent}public interface IVisitor<T>");
+            lines.Add($"{DoubleIndent}{{");
 
             foreach (var type in types)
             {
                 var typeParts = type.Split(":");
                 var typeName = typeParts[0].Trim();
-                lines.Add($"\t\t\tT Visit{typeName}{baseName}({typeName} {baseName.ToLower()});");
+                lines.Add($"{TripleIndent}T Visit{typeName}{baseName}({typeName} {baseName.ToLower()});");
             }
 
-            lines.Add("\t\t}");
+            lines.Add($"{DoubleIndent}}}");
         }
 
         private static void DefineType(IList<string> lines, string baseName, string className, string fieldList)
         {
-            lines.Add($"\t\tpublic class {className} : {baseName}");
-            lines.Add("\t\t{");
+            lines.Add($"{DoubleIndent}public class {className} : {baseName}");
+            lines.Add($"{DoubleIndent}{{");
             
             var fields = fieldList
                 .Split(",")
@@ -119,27 +125,27 @@ namespace GenerateAst
 
             foreach (var field in fields)
             {
-                lines.Add($"\t\t\tpublic {field.Type} {field.PascalCaseIdentifier} {{ get; }}");
+                lines.Add($"{TripleIndent}public {field.Type} {field.PascalCaseIdentifier} {{ get; }}");
             }
 
             var parameterList = String.Join(", ", fields.Select(f => f.ToParam()));
             lines.Add(string.Empty);
-            lines.Add($"\t\t\tpublic {className}({parameterList})");
-            lines.Add("\t\t\t{");
+            lines.Add($"{TripleIndent}public {className}({parameterList})");
+            lines.Add($"{TripleIndent}{{");
             
             foreach (var field in fields)
             {
-                lines.Add($"\t\t\t\t{field.PascalCaseIdentifier} = {field.CamelCaseIdentifier};");
+                lines.Add($"{QuadIndent}{field.PascalCaseIdentifier} = {field.CamelCaseIdentifier};");
             }
 
-            lines.Add("\t\t\t}");
+            lines.Add($"{TripleIndent}}}");
 
             lines.Add(string.Empty);
-            lines.Add("\t\t\tpublic override T Accept<T>(IVisitor<T> visitor)");
-            lines.Add("\t\t\t{");
-            lines.Add($"\t\t\t\treturn visitor.Visit{className}{baseName}(this);");
-            lines.Add("\t\t\t}");
-            lines.Add("\t\t}");
+            lines.Add($"{TripleIndent}public override T Accept<T>(IVisitor<T> visitor)");
+            lines.Add($"{TripleIndent}{{");
+            lines.Add($"{QuadIndent}return visitor.Visit{className}{baseName}(this);");
+            lines.Add($"{TripleIndent}}}");
+            lines.Add($"{DoubleIndent}}}");
         }
     }
 

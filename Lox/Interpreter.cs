@@ -303,5 +303,10 @@ namespace Lox
             if (value == null) return "nil";
             return value.ToString();
         }
+
+        public object VisitClassStmt(Stmt.Class stmt)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

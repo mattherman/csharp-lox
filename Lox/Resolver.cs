@@ -229,5 +229,10 @@ namespace Lox
             Resolve(expr.Expr);
             return null;
         }
+
+        public object VisitClassStmt(Stmt.Class stmt)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
