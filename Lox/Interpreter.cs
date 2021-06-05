@@ -236,6 +236,16 @@ namespace Lox
             return null;
         }
 
+        public object VisitClassStmt(Stmt.Class stmt)
+        {
+            // Two step define/assign so that members of the class can
+            // reference the class itself
+            _environment.Define(stmt.Name.Lexeme, null);
+            var klass = new LoxClass(stmt.Name.Lexeme);
+            _environment.Assign(stmt.Name, klass);
+            return null;
+        }
+
         private void CheckNumberOperand(Token op, object operand)
         {
             if (operand is Double) return;
@@ -302,11 +312,6 @@ namespace Lox
         {
             if (value == null) return "nil";
             return value.ToString();
-        }
-
-        public object VisitClassStmt(Stmt.Class stmt)
-        {
-            throw new NotImplementedException();
         }
     }
 }

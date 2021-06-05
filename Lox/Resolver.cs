@@ -167,6 +167,13 @@ namespace Lox
             return null;
         }
 
+        public object VisitClassStmt(Stmt.Class stmt)
+        {
+            Declare(stmt.Name);
+            Define(stmt.Name);
+            return null;
+        }
+
         public object VisitLiteralExpr(Expr.Literal expr)
         {
             return null;
@@ -228,11 +235,6 @@ namespace Lox
         {
             Resolve(expr.Expr);
             return null;
-        }
-
-        public object VisitClassStmt(Stmt.Class stmt)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }
