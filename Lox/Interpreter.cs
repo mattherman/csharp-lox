@@ -313,5 +313,10 @@ namespace Lox
             if (value == null) return "nil";
             return value.ToString();
         }
+
+        public object VisitGetExpr(Expr.Get expr)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -64,5 +64,10 @@ namespace Lox
             var expressions = new []{ expr.Callee }.Concat(expr.Arguments);
             return Parenthesize("call", expressions.ToArray());
         }
+
+        public string VisitGetExpr(Expr.Get expr)
+        {
+            return Parenthesize($".{expr.Name}", expr.Obj);
+        }
     }
 }

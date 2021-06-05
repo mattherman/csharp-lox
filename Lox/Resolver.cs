@@ -236,5 +236,10 @@ namespace Lox
             Resolve(expr.Expr);
             return null;
         }
+
+        public object VisitGetExpr(Expr.Get expr)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

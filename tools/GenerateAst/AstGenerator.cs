@@ -27,6 +27,7 @@ namespace GenerateAst
                     "Assign   : Token name, Expr value",
                     "Binary   : Expr left, Token op, Expr right",
                     "Call     : Expr callee, Token paren, List<Expr> arguments",
+                    "Get      : Expr obj, Token name",
                     "Grouping : Expr expr",
                     "Literal  : object value",
                     "Logical  : Expr left, Token op, Expr right",
