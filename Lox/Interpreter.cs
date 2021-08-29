@@ -37,6 +37,20 @@ namespace Lox
             return Evaluate(expr.Right);
         }
 
+        public object VisitSetExpr(Expr.Set expr)
+        {
+            var obj = Evaluate(expr.Obj);
+
+            if (obj is LoxInstance instance)
+            {
+                var val = Evaluate(expr.Value);
+                instance.Set(expr.Name, val);
+                return val;
+            }
+
+            throw new RuntimeException(expr.Name, "Only instances have fields.");
+        }
+
         public object VisitGroupingExpr(Expr.Grouping expr)
         {
             return Evaluate(expr.Expr);
@@ -316,7 +330,13 @@ namespace Lox
 
         public object VisitGetExpr(Expr.Get expr)
         {
-            throw new NotImplementedException();
+            var obj = Evaluate(expr.Obj);
+            if (obj is LoxInstance instance)
+            {
+                return instance.Get(expr.Name);
+            }
+
+            throw new RuntimeException(expr.Name, "Only instances have properties.");
         }
     }
 }

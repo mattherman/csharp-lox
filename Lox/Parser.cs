@@ -259,6 +259,10 @@ namespace Lox
                 {
                     return new Expr.Assign(varExpr.Name, val);
                 }
+                else if (expr is Expr.Get getExpr)
+                {
+                    return new Expr.Set(getExpr.Obj, getExpr.Name, val);
+                }
 
                 Error(equal, "Invalid assignment target.");
             }
@@ -345,6 +349,11 @@ namespace Lox
                 if (Match(TokenType.LEFT_PAREN))
                 {
                     expr = FinishCall(expr);
+                }
+                else if (Match(TokenType.DOT))
+                {
+                    var name = Consume(TokenType.IDENTIFIER, "Expect property name after '.'.");
+                    expr = new Expr.Get(expr, name);
                 }
                 else
                 {

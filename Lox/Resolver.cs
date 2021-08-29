@@ -186,6 +186,13 @@ namespace Lox
             return null;
         }
 
+        public object VisitSetExpr(Expr.Set expr)
+        {
+            Resolve(expr.Value);
+            Resolve(expr.Obj);
+            return null;
+        }
+
         public object VisitUnaryExpr(Expr.Unary expr)
         {
             Resolve(expr.Right);
@@ -231,15 +238,16 @@ namespace Lox
             return null;
         }
 
+        public object VisitGetExpr(Expr.Get expr)
+        {
+            Resolve(expr.Obj);
+            return null;
+        }
+
         public object VisitGroupingExpr(Expr.Grouping expr)
         {
             Resolve(expr.Expr);
             return null;
-        }
-
-        public object VisitGetExpr(Expr.Get expr)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

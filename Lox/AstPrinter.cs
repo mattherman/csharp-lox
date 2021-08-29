@@ -69,5 +69,10 @@ namespace Lox
         {
             return Parenthesize($".{expr.Name}", expr.Obj);
         }
+
+        public string VisitSetExpr(Expr.Set expr)
+        {
+            return Parenthesize(expr.Name.Lexeme, expr.Value);
+        }
     }
 }

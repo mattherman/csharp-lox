@@ -31,6 +31,7 @@ namespace GenerateAst
                     "Grouping : Expr expr",
                     "Literal  : object value",
                     "Logical  : Expr left, Token op, Expr right",
+                    "Set      : Expr obj, Token name, Expr value",
                     "Unary    : Token op, Expr right",
                     "Variable : Token name"
                 },
