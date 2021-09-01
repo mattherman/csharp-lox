@@ -255,7 +255,15 @@ namespace Lox
             // Two step define/assign so that members of the class can
             // reference the class itself
             _environment.Define(stmt.Name.Lexeme, null);
-            var klass = new LoxClass(stmt.Name.Lexeme);
+
+            var methods = new Dictionary<string, LoxFunction>();
+            foreach (var method in stmt.Methods)
+            {
+                var function = new LoxFunction(method, _environment);
+                methods[method.Name.Lexeme] = function;
+            }
+
+            var klass = new LoxClass(stmt.Name.Lexeme, methods);
             _environment.Assign(stmt.Name, klass);
             return null;
         }
