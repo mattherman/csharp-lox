@@ -16,6 +16,13 @@ namespace Lox
             _closure = closure;
         }
 
+        public LoxFunction Bind(LoxInstance instance)
+        {
+            var environment = new Environment(_closure);
+            environment.Define("this", instance);
+            return new LoxFunction(_declaration, environment);
+        }
+
         public object Call(Interpreter interpreter, List<object> arguments)
         {
             var environment = new Environment(_closure);

@@ -51,6 +51,11 @@ namespace Lox
             throw new RuntimeException(expr.Name, "Only instances have fields.");
         }
 
+        public object VisitThisExpr(Expr.This expr)
+        {
+            return LookUpVariable(expr.Keyword, expr);
+        }
+
         public object VisitGroupingExpr(Expr.Grouping expr)
         {
             return Evaluate(expr.Expr);

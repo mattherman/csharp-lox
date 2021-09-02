@@ -173,11 +173,16 @@ namespace Lox
             Declare(stmt.Name);
             Define(stmt.Name);
 
+            BeginScope();
+            _scopes.Peek()["this"] = true;
+
             foreach (var method in stmt.Methods)
             {
                 var declaration = FunctionType.Method;
                 ResolveFunction(method, declaration);
             }
+
+            EndScope();
 
             return null;
         }
@@ -198,6 +203,12 @@ namespace Lox
         {
             Resolve(expr.Value);
             Resolve(expr.Obj);
+            return null;
+        }
+
+        public object VisitThisExpr(Expr.This expr)
+        {
+            ResolveLocal(expr, expr.Keyword);
             return null;
         }
 
