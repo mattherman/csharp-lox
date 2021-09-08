@@ -9,12 +9,20 @@ namespace Lox
         {
             None,
             Function,
+            Initializer,
             Method
+        }
+
+        private enum ClassType
+        {
+            None,
+            Class
         }
 
         private readonly Interpreter _interpreter;
         private readonly Stack<Dictionary<string, bool>> _scopes = new Stack<Dictionary<string, bool>>();
         private FunctionType _currentFunction = FunctionType.None;
+        private ClassType _currentClass = ClassType.None;
 
         public Resolver(Interpreter interpreter)
         {
@@ -151,6 +159,10 @@ namespace Lox
 
             if (stmt.Value != null)
             {
+                if (_currentFunction == FunctionType.Initializer)
+                {
+                    Lox.Error(stmt.Keyword, "Can't return a value from an initializer.");
+                }
                 Resolve(stmt.Value);
             }
             return null;
@@ -170,6 +182,9 @@ namespace Lox
 
         public object VisitClassStmt(Stmt.Class stmt)
         {
+            var enclosingClass = _currentClass;
+            _currentClass = ClassType.Class;
+
             Declare(stmt.Name);
             Define(stmt.Name);
 
@@ -179,10 +194,16 @@ namespace Lox
             foreach (var method in stmt.Methods)
             {
                 var declaration = FunctionType.Method;
+                if (method.Name.Lexeme == "init")
+                {
+                    declaration = FunctionType.Initializer;
+                }
                 ResolveFunction(method, declaration);
             }
 
             EndScope();
+
+            _currentClass = enclosingClass;
 
             return null;
         }
@@ -208,6 +229,12 @@ namespace Lox
 
         public object VisitThisExpr(Expr.This expr)
         {
+            if (_currentClass == ClassType.None)
+            {
+                Lox.Error(expr.Keyword, "Can't use 'this' outside of a class.");
+                return null;
+            }
+
             ResolveLocal(expr, expr.Keyword);
             return null;
         }

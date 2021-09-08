@@ -38,30 +38,24 @@ namespace Lox
             throw new RuntimeException(name, $"Undefined variable {name.Lexeme}.");
         }
 
-        public void AssignAt(int depth, Token name, object val)
+        public void AssignAt(int depth, string name, object val)
         {
-            Ancestor(depth).Assign(name, val);
+            var ancestorEnvironment = Ancestor(depth);
+            ancestorEnvironment._values[name] = val;
         }
 
         public object Get(Token name)
         {
-            var found = _values.TryGetValue(name.Lexeme, out var val);
-
-            if (found)
-            {
-                if (val == null)
-                {
-                    throw new RuntimeException(name, $"Attempted to access unassigned variable '{name.Lexeme}'.");
-                }
+            if (_values.TryGetValue(name.Lexeme, out var val))
                 return val;
-            }
 
             throw new RuntimeException(name, $"Undefined variable '{name.Lexeme}'.");
         }
 
-        public object GetAt(int depth, Token name)
+        public object GetAt(int depth, string name)
         {
-            return Ancestor(depth).Get(name);
+            var ancestorEnvironment = Ancestor(depth);
+            return ancestorEnvironment._values[name];
         }
 
         private Environment Ancestor(int depth)

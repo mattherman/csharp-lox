@@ -13,7 +13,18 @@ namespace Lox
             _methods = methods;
         }
 
-        public int Arity => 0;
+        // This could probably be a prop initialized in the constructor
+        // since it is not possible to change a class after definition.
+        public int Arity
+        {
+            get
+            {
+                var initializer = FindMethod("init");
+                if (initializer == null)
+                    return 0;
+                return initializer.Arity;
+            }
+        }
 
         public LoxFunction FindMethod(string name)
         {
@@ -24,6 +35,11 @@ namespace Lox
         public object Call(Interpreter interpreter, List<object> arguments)
         {
             var instance = new LoxInstance(this);
+            var initializer = FindMethod("init");
+            if (initializer != null)
+            {
+                initializer.Bind(instance).Call(interpreter, arguments);
+            }
             return instance;
         }
 

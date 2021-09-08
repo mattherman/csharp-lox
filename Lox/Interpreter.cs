@@ -82,7 +82,7 @@ namespace Lox
             var found = _locals.TryGetValue(expr, out var depth);
             if (found)
             {
-                return _environment.GetAt(depth, name);
+                return _environment.GetAt(depth, name.Lexeme);
             }
             return _globals.Get(name);
         }
@@ -98,7 +98,7 @@ namespace Lox
             var found = _locals.TryGetValue(expr, out var depth);
             if (found)
             {
-                _environment.AssignAt(depth, expr.Name, val);
+                _environment.AssignAt(depth, expr.Name.Lexeme, val);
             }
             else
             {
@@ -250,7 +250,7 @@ namespace Lox
 
         public object VisitFunctionStmt(Stmt.Function stmt)
         {
-            var function = new LoxFunction(stmt, _environment);
+            var function = new LoxFunction(stmt, _environment, false);
             _environment.Define(stmt.Name.Lexeme, function);
             return null;
         }
@@ -264,7 +264,8 @@ namespace Lox
             var methods = new Dictionary<string, LoxFunction>();
             foreach (var method in stmt.Methods)
             {
-                var function = new LoxFunction(method, _environment);
+                var isInitializer = method.Name.Lexeme.Equals("init", StringComparison.Ordinal);
+                var function = new LoxFunction(method, _environment, isInitializer);
                 methods[method.Name.Lexeme] = function;
             }
 
