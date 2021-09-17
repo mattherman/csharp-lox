@@ -46,7 +46,7 @@ namespace GenerateAst
                 new [] {
                     "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
                     "Block      : List<Stmt> statements",
-                    "Class      : Token name, List<Stmt.Function> methods",
+                    "Class      : Token name, Expr.Variable superclass, List<Stmt.Function> methods",
                     "Expression : Expr expr",
                     "Print      : Expr expr",
                     "Var        : Token name, Expr initializer",

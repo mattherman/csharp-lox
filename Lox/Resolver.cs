@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -187,6 +188,15 @@ namespace Lox
 
             Declare(stmt.Name);
             Define(stmt.Name);
+
+            if (stmt.Superclass != null)
+            {
+                if (stmt.Name.Lexeme.Equals(stmt.Superclass.Name.Lexeme, StringComparison.Ordinal))
+                {
+                    Lox.Error(stmt.Superclass.Name, "A class can't inherit from itself.");
+                }
+                Resolve(stmt.Superclass);
+            }
 
             BeginScope();
             _scopes.Peek()["this"] = true;
