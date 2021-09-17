@@ -31,7 +31,7 @@ namespace Lox
         public LoxFunction FindMethod(string name)
         {
             var found = _methods.TryGetValue(name, out var method);
-            return found ? method : null;
+            return found ? method : Superclass?.FindMethod(name);
         }
 
         public object Call(Interpreter interpreter, List<object> arguments)
