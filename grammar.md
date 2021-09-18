@@ -41,8 +41,7 @@ unary          → ( "!" | "-" ) unary
                | call ;
 call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
 arguments      → expression ( "," expression )* ;
-primary        →  "false" | "true" | "nil"
-               | NUMBER | STRING
-               | "(" expression ")" 
-               | IDENTIFIER ;
+primary        →  "false" | "true" | "nil" | "this"
+               | NUMBER | STRING | IDENTIFIER | "(" expression ")" 
+               | "super" "." IDENTIFIER ;
 ```

@@ -4,17 +4,17 @@ namespace Lox
 {
     public class Environment
     {
-        private readonly Environment _enclosing;
+        public Environment Enclosing { get; private set; }
         private readonly IDictionary<string, object> _values = new Dictionary<string, object>();
 
         public Environment()
         {
-            _enclosing = null;
+            Enclosing = null;
         }
 
         public Environment(Environment enclosing)
         {
-            _enclosing = enclosing;
+            Enclosing = enclosing;
         }
 
         public void Define(Token name, object val)
@@ -63,7 +63,7 @@ namespace Lox
             var environment = this;
             for (var i = 0; i < depth; i++)
             {
-                environment = environment._enclosing;
+                environment = environment.Enclosing;
             }
             return environment;
         }

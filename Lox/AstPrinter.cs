@@ -75,6 +75,11 @@ namespace Lox
             return Parenthesize(expr.Name.Lexeme, expr.Value);
         }
 
+        public string VisitSuperExpr(Expr.Super expr)
+        {
+            return $"{expr.Keyword.Lexeme}.{expr.Method.Lexeme}";
+        }
+
         public string VisitThisExpr(Expr.This expr)
         {
             return expr.Keyword.Lexeme;

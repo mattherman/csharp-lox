@@ -51,6 +51,24 @@ namespace Lox
             throw new RuntimeException(expr.Name, "Only instances have fields.");
         }
 
+        public object VisitSuperExpr(Expr.Super expr)
+        {
+            // Lookup `super` at the depth the expression was resolved at.
+            var depth = _locals[expr];
+            var superclass = (LoxClass)_environment.GetAt(depth, "super");
+
+            // Grab the proper `this` by looking at the environment enclosed by the one that contained `super`.
+            var obj = (LoxInstance)_environment.GetAt(depth - 1, "this");
+
+            // Find the method on the super class and bind it to `this`.
+            var method = superclass.FindMethod(expr.Method.Lexeme);
+            if (method == null)
+            {
+                throw new RuntimeException(expr.Method, $"Undefined property '{expr.Method.Lexeme}'.");
+            }
+            return method.Bind(obj);
+        }
+
         public object VisitThisExpr(Expr.This expr)
         {
             return LookUpVariable(expr.Keyword, expr);
@@ -271,6 +289,14 @@ namespace Lox
             // reference the class itself
             _environment.Define(stmt.Name.Lexeme, null);
 
+            if (superclass != null)
+            {
+                // Wrap the current environment with one where `super` is defined
+                // so that method definitions can capture it.
+                _environment = new Environment(_environment);
+                _environment.Define("super", superclass);
+            }
+
             var methods = new Dictionary<string, LoxFunction>();
             foreach (var method in stmt.Methods)
             {
@@ -280,6 +306,13 @@ namespace Lox
             }
 
             var klass = new LoxClass(stmt.Name.Lexeme, superclass, methods);
+
+            if (stmt.Superclass != null)
+            {
+                // Reset to the outer environment where the class itself was defined.
+                _environment = _environment.Enclosing;
+            }
+
             _environment.Assign(stmt.Name, klass);
             return null;
         }

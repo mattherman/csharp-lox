@@ -17,7 +17,8 @@ namespace Lox
         private enum ClassType
         {
             None,
-            Class
+            Class,
+            Subclass
         }
 
         private readonly Interpreter _interpreter;
@@ -195,7 +196,12 @@ namespace Lox
                 {
                     Lox.Error(stmt.Superclass.Name, "A class can't inherit from itself.");
                 }
+
+                _currentClass = ClassType.Subclass;
                 Resolve(stmt.Superclass);
+
+                BeginScope();
+                _scopes.Peek().Add("super", true);
             }
 
             BeginScope();
@@ -212,6 +218,11 @@ namespace Lox
             }
 
             EndScope();
+
+            if (stmt.Superclass != null)
+            {
+                EndScope();
+            }
 
             _currentClass = enclosingClass;
 
@@ -234,6 +245,21 @@ namespace Lox
         {
             Resolve(expr.Value);
             Resolve(expr.Obj);
+            return null;
+        }
+
+        public object VisitSuperExpr(Expr.Super expr)
+        {
+            if (_currentClass == ClassType.None)
+            {
+                Lox.Error(expr.Keyword, "Can't use 'super' outside of a class.");
+            }
+            else if (_currentClass != ClassType.Subclass)
+            {
+                Lox.Error(expr.Keyword, "Can't user 'super' in a class with no superclass.");
+            }
+
+            ResolveLocal(expr, expr.Keyword);
             return null;
         }
 
