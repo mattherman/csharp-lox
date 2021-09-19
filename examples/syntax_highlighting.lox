@@ -1,0 +1,63 @@
+class Thing {
+    init() {
+        this.thingProp = 1;
+    }
+
+    thingMethod() {
+        var x = 50;
+        fun closure(y) {
+            return x + y;
+        }
+        return closure;
+    }
+}
+
+class ThingChild < Thing {
+    thingChildMethod() {
+        var closure = super.thingMethod();
+        print closure(10);
+    }
+}
+
+var thing = ThingChild();
+thing.thingChildMethod();
+thing.thingProp;
+
+var t = true;
+var f = false;
+var nothing = nil;
+
+t == f;
+t != f;
+t and f;
+t or f;
+!t;
+
+5 < 10;
+5 <= 10;
+5 > 10;
+5 >= 10;
+
+var count = 0;
+while (count < 10) {
+    if (count == 2) {
+        print "Equals 2!";
+    } else if (count == 5) {
+        print "Equals 5!";
+    } else {
+        print "Nope.";
+    }
+    print "Count: ";
+    print count;
+    count = count + 1;
+}
+
+fun square(x) {
+    return x * x;
+}
+
+square(6);
+
+var whole = 10;
+var decimal = 10.5;
+decimal = 100.2222;
