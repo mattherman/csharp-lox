@@ -42,8 +42,6 @@ var count = 0;
 while (count < 10) {
     if (count == 2) {
         print "Equals 2!";
-    } else if (count == 5) {
-        print "Equals 5!";
     } else {
         print "Nope.";
     }
@@ -61,3 +59,17 @@ square(6);
 var whole = 10;
 var decimal = 10.5;
 decimal = 100.2222;
+
+var A;
+var a;
+var Abc;
+var abc;
+var Abc123;
+var Abc123_;
+var 123invalid;
+var _invalid;
+
+var nospacenum=123;
+var nospacestr="hello";
+fun nospacefun(){}
+class NoSpaceClass(){}
