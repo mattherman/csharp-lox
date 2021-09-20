@@ -13,6 +13,7 @@ namespace Lox
         private int _start = 0;
         private int _current = 0;
         private int _line = 1;
+        private int _column = 1;
 
         private static readonly IDictionary<string, TokenType> _keywords = new Dictionary<string, TokenType> {
             { "and", TokenType.AND },
@@ -46,7 +47,7 @@ namespace Lox
                 ScanToken();
             }
 
-            _tokens.Add(new Token(TokenType.EOF, "", null, _line));
+            _tokens.Add(new Token(TokenType.EOF, "", null, _line, _column));
             return _tokens;
         }
 
@@ -124,7 +125,7 @@ namespace Lox
                 case '\t':
                     break;
                 case '\n':
-                    _line++;
+                    NextLine();
                     break;
                 case '"':
                     String();
@@ -140,7 +141,7 @@ namespace Lox
                     }
                     else
                     {
-                        Lox.Error(_line, "Unexpected character.");
+                        Lox.Error(_line, _column - 1, "Unexpected character.");
                     }
                     break;
             }
@@ -197,13 +198,13 @@ namespace Lox
         {
             while (Peek() != '"' && !IsAtEnd())
             {
-                if (Peek() == '\n') _line++;
+                if (Peek() == '\n') NextLine();
                 Advance();
             }
 
             if (IsAtEnd())
             {
-                Lox.Error(_line, "Unterminated string.");
+                Lox.Error(_line, _column, "Unterminated string.");
                 return;
             }
 
@@ -232,14 +233,21 @@ namespace Lox
             if (IsAtEnd()) return false;
             if (_source[_current] != expected) return false;
 
-            _current++;
+            Advance();
             return true;
         }
 
         private char Advance()
         {
             _current++;
+            _column++;
             return _source[_current - 1];
+        }
+
+        private void NextLine()
+        {
+            _line++;
+            _column = 1;
         }
 
         private void AddToken(TokenType type)
@@ -250,7 +258,7 @@ namespace Lox
         private void AddToken(TokenType type, object literal)
         {
             var text = _source.Substring(_start, _current - _start);
-            _tokens.Add(new Token(type, text, literal, _line));
+            _tokens.Add(new Token(type, text, literal, _line, _column - 1));
         }
     }
 }

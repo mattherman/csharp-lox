@@ -1,0 +1,9 @@
+class Adder {
+    add(x, y) {
+        return x + y;
+    }
+}
+
+var adder = Adder();
+var result = adder.add(123, "hello");
+print result;

@@ -6,6 +6,7 @@ namespace Lox
     public class Lox
     {
         private static Interpreter _interpreter = new Interpreter();
+        private static string _filename;
         private static bool _hadError = false;
         private static bool _hadRuntimeError = false;
 
@@ -31,6 +32,7 @@ namespace Lox
         private static void RunFile(string filename)
         {
             var source = File.ReadAllText(filename);
+            _filename = filename;
             Run(source);
             if (_hadError)
                 System.Environment.Exit(65);
@@ -68,32 +70,33 @@ namespace Lox
             _interpreter.Interpret(statements);
         }
 
-        internal static void Error(int line, string message)
+        internal static void RuntimeError(RuntimeException ex)
         {
-            Report(line, string.Empty, message);
+            Error(ex.Token, ex.Message);
+            _hadRuntimeError = true;
+        }
+
+        internal static void Error(int line, int column, string message)
+        {
+            Report(line, column, string.Empty, message);
         }
 
         internal static void Error(Token token, string message)
         {
             if (token.Type == TokenType.EOF)
             {
-                Report(token.Line, " at end", message);
+                Report(token.Line, token.Column, " at end", message);
             }
             else
             {
-                Report(token.Line, $" at '{token.Lexeme}'", message);
+                Report(token.Line, token.Column, $" at '{token.Lexeme}'", message);
             }
         }
 
-        internal static void RuntimeError(RuntimeException ex)
+        private static void Report(int line, int column, string where, string message)
         {
-            Console.Error.WriteLine($"{ex.Message}\n[line {ex.Token.Line}]");
-            _hadRuntimeError = true;
-        }
-
-        private static void Report(int line, string where, string message)
-        {
-            Console.WriteLine($"[line {line}] Error{where}: {message}");
+            var filename = _filename != null ? $"{_filename}, " : string.Empty;
+            Console.WriteLine($"[{filename}line {line}, col {column}] Error{where}: {message}");
             _hadError = true;
         }
     }
