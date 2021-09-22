@@ -3,12 +3,15 @@ class Thing {
         this.thingProp = 1;
     }
 
-    thingMethod() {
-        var x = 50;
+    thingMethod(x) {
         fun closure(y) {
             return x + y;
         }
         return closure;
+    }
+
+    thingVoidMethod() {
+        return;
     }
 }
 
@@ -28,7 +31,7 @@ var f = false;
 var nothing = nil;
 
 t == f;
-t != f;
+t != fk;
 t and f;
 t or f;
 !t;
@@ -49,6 +52,8 @@ while (count < 10) {
     print count;
     count = count + 1;
 }
+
+while (true) print "forever!";
 
 fun square(x) {
     return x * x;
@@ -73,3 +78,21 @@ var nospacenum=123;
 var nospacestr="hello";
 fun nospacefun(){}
 class NoSpaceClass(){}
+
+fun multipleParams(num, str, func) { }
+multipleParams(123, "abc", square);
+
+fun singleParam(num) { }
+singleParam(233);
+
+fun nestedFunction() {
+    fun nested() { }
+}
+
+class NestedClass {
+    class Nested < NestedBase {
+
+    }
+}
+
+{ print "in a block"; }
