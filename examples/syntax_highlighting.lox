@@ -24,6 +24,7 @@ class ThingChild < Thing {
 
 var thing = ThingChild();
 thing.thingChildMethod();
+thing.thingMethod(10);
 thing.thingProp;
 
 var t = true;
@@ -54,6 +55,14 @@ while (count < 10) {
 }
 
 while (true) print "forever!";
+
+for (var i = 0; i < 10; i = i + 1) {
+    print i;
+}
+
+for (count > 0; count = count - 1) {
+    print count;
+}
 
 fun square(x) {
     return x * x;
