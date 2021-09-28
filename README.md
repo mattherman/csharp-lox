@@ -2,6 +2,10 @@
 
 [Lox](http://www.craftinginterpreters.com) interpreter written in C#.
 
+## Releases
+
+You can download the executable from the [Releases](https://github.com/mattherman/csharp-lox/releases) page. There are artifacts for both Linux and Windows. If you do not have .NET 5 installed you will need to use the `-self-contained` binaries.
+
 ## TODO
 
 The interpreter is finished, but there are a number of additions I would like to make:
