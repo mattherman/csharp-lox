@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 
 namespace Lox
 {
@@ -9,6 +11,15 @@ namespace Lox
         private static string _filename;
         private static bool _hadError = false;
         private static bool _hadRuntimeError = false;
+
+        private static string Version
+        {
+            get
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                return FileVersionInfo.GetVersionInfo(assembly.Location).FileVersion;
+            }
+        }
 
         public static void Main(string[] args)
         {
@@ -42,6 +53,7 @@ namespace Lox
 
         private static void RunPrompt()
         {
+            Console.WriteLine($"Lox {Version}\n");
             while (true)
             {
                 Console.Write("> ");
