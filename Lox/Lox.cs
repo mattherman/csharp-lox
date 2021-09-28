@@ -12,14 +12,10 @@ namespace Lox
         private static bool _hadError = false;
         private static bool _hadRuntimeError = false;
 
-        private static string Version
-        {
-            get
-            {
-                var assembly = Assembly.GetExecutingAssembly();
-                return FileVersionInfo.GetVersionInfo(assembly.Location).FileVersion;
-            }
-        }
+        // This should be kept in-sync with the AssemblyFileVersion in the project file.
+        // There are ways to read the file version programmatically, but they do not work
+        // in single-file applications.
+        private const string Version = "1.0.0";
 
         public static void Main(string[] args)
         {
