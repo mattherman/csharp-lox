@@ -5,14 +5,16 @@ namespace Lox
 {
     public class LoxFunction : ILoxCallable
     {
-        private readonly Stmt.Function _declaration;
+        private readonly string _name;
+        private readonly Expr.Function _declaration;
         private readonly Environment _closure;
         private readonly bool _isInitializer;
 
         public int Arity { get { return _declaration.Parameters.Count; } }
 
-        public LoxFunction(Stmt.Function declaration, Environment closure, bool isInitializer)
+        public LoxFunction(string name, Expr.Function declaration, Environment closure, bool isInitializer)
         {
+            _name = name;
             _declaration = declaration;
             _closure = closure;
             _isInitializer = isInitializer;
@@ -22,7 +24,7 @@ namespace Lox
         {
             var environment = new Environment(_closure);
             environment.Define("this", instance);
-            return new LoxFunction(_declaration, environment, _isInitializer);
+            return new LoxFunction(_name, _declaration, environment, _isInitializer);
         }
 
         public object Call(Interpreter interpreter, List<object> arguments)
@@ -48,6 +50,7 @@ namespace Lox
             return null;
         }
 
-        public override string ToString() => $"<fn {_declaration.Name.Lexeme}>";
+        public override string ToString() => 
+            _name == null ? "<fn>" : $"<fn {_name}>";
     }
 }

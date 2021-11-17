@@ -33,7 +33,11 @@ namespace Lox
             try
             {
                 if (Match(TokenType.CLASS)) return ClassDeclaration();
-                if (Match(TokenType.FUN)) return Function("function");
+                if (Check(TokenType.FUN) && CheckNext(TokenType.IDENTIFIER))
+                {
+                    Consume(TokenType.FUN, null);
+                    return Function("function");
+                }
                 if (Match(TokenType.VAR)) return VarDeclaration();
                 return Statement();
             }
@@ -69,10 +73,14 @@ namespace Lox
 
         private Stmt.Function Function(string kind)
         {
-            var name = Consume(TokenType.IDENTIFIER, $"Expect {kind} name.");
-            var parameters = new List<Token>();
+            var name = Consume(TokenType.IDENTIFIER, $"Expect \"{kind}\" name.");
+            return new Stmt.Function(name, FunctionBody(kind));
+        }
 
-            Consume(TokenType.LEFT_PAREN, $"Expect '(' after {kind} name.");
+        private Expr.Function FunctionBody(string kind)
+        {
+            Consume(TokenType.LEFT_PAREN, $"Expect '(' after \"{kind}\" name.");
+            var parameters = new List<Token>();
             if (!Check(TokenType.RIGHT_PAREN))
             {
                 do
@@ -85,12 +93,11 @@ namespace Lox
                 } while (Match(TokenType.COMMA));
             }
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
-
-            // Consume the '{' before calling Block since it assumes the brace token has already been matched
-            Consume(TokenType.LEFT_BRACE, $"Expect '{{' before {kind} body.");
+            
+            Consume(TokenType.LEFT_BRACE, $"Expect '{{' before \"{kind}\" body.");
             var body = Block();
 
-            return new Stmt.Function(name, parameters, body);
+            return new Expr.Function(parameters, body);
         }
 
         private Stmt VarDeclaration()
@@ -428,6 +435,11 @@ namespace Lox
                 return new Expr.Grouping(expr);
             }
 
+            if (Match(TokenType.FUN))
+            {
+                return FunctionBody("function");
+            }
+
             throw Error(Peek(), "Expect expression.");
         }
 
@@ -453,6 +465,13 @@ namespace Lox
         {
             if (IsAtEnd()) return false;
             return Peek().Type == type;
+        }
+
+        private bool CheckNext(TokenType type)
+        {
+            if (IsAtEnd()) return false;
+            if (_tokens[_current + 1].Type == TokenType.EOF) return false;
+            return _tokens[_current + 1].Type == type;
         }
 
         private Token Advance()

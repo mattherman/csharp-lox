@@ -26,6 +26,7 @@ namespace GenerateAst
                 new [] {
                     "Assign   : Token name, Expr value",
                     "Binary   : Expr left, Token op, Expr right",
+                    "Function : List<Token> parameters, List<Stmt> body",
                     "Call     : Expr callee, Token paren, List<Expr> arguments",
                     "Get      : Expr obj, Token name",
                     "Grouping : Expr expr",
@@ -53,7 +54,7 @@ namespace GenerateAst
                     "Var        : Token name, Expr initializer",
                     "While      : Expr condition, Stmt body",
                     "Return     : Token keyword, Expr value",
-                    "Function   : Token name, List<Token> parameters, List<Stmt> body"
+                    "Function   : Token name, Expr.Function functionExpression"
                 },
                 new [] {
                     "System.Collections.Generic"

@@ -268,9 +268,14 @@ namespace Lox
 
         public object VisitFunctionStmt(Stmt.Function stmt)
         {
-            var function = new LoxFunction(stmt, _environment, false);
-            _environment.Define(stmt.Name.Lexeme, function);
+            var functionName = stmt.Name.Lexeme;
+            _environment.Define(functionName, new LoxFunction(functionName, stmt.FunctionExpression, _environment, false));
             return null;
+        }
+
+        public object VisitFunctionExpr(Expr.Function expr)
+        {
+            return new LoxFunction(null, expr, _environment, false);
         }
 
         public object VisitClassStmt(Stmt.Class stmt)
@@ -301,8 +306,9 @@ namespace Lox
             foreach (var method in stmt.Methods)
             {
                 var isInitializer = method.Name.Lexeme.Equals("init", StringComparison.Ordinal);
-                var function = new LoxFunction(method, _environment, isInitializer);
-                methods[method.Name.Lexeme] = function;
+                var methodName = method.Name.Lexeme;
+                var function = new LoxFunction(methodName, method.FunctionExpression, _environment, isInitializer);
+                methods[methodName] = function;
             }
 
             var klass = new LoxClass(stmt.Name.Lexeme, superclass, methods);

@@ -71,7 +71,7 @@ namespace Lox
             }
         }
 
-        private void ResolveFunction(Stmt.Function function, FunctionType type)
+        private void ResolveFunction(Expr.Function function, FunctionType type)
         {
             var enclosingFunction = _currentFunction;
             _currentFunction = type;
@@ -142,7 +142,13 @@ namespace Lox
         {
             Declare(stmt.Name);
             Define(stmt.Name);
-            ResolveFunction(stmt, FunctionType.Function);
+            ResolveFunction(stmt.FunctionExpression, FunctionType.Function);
+            return null;
+        }
+
+        public object VisitFunctionExpr(Expr.Function expr)
+        {
+            ResolveFunction(expr, FunctionType.Function);
             return null;
         }
 
@@ -214,7 +220,7 @@ namespace Lox
                 {
                     declaration = FunctionType.Initializer;
                 }
-                ResolveFunction(method, declaration);
+                ResolveFunction(method.FunctionExpression, declaration);
             }
 
             EndScope();

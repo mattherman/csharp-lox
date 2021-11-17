@@ -8,7 +8,7 @@ declaration    → classDecl
                | statement ;
 classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )? "{" function* "}" ;
 funDecl        → "fun" function ;
-function       → IDENTIFIER "(" parameters? ")" block ;
+function  → IDENTIFIER lambda ;
 parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
 
 varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
@@ -29,6 +29,7 @@ exprStmt       → expression ";" ;
 printStmt      → "print" expression ";" ;
 
 expression     → assignment ;
+lambda         → "(" parameters? ")" block ;
 assignment     → ( call "." )? IDENTIFER "=" assignment
                | logic_or ;
 logic_or       → logic_and ( "or" logic_and )* ;
@@ -43,5 +44,5 @@ call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
 arguments      → expression ( "," expression )* ;
 primary        →  "false" | "true" | "nil" | "this"
                | NUMBER | STRING | IDENTIFIER | "(" expression ")" 
-               | "super" "." IDENTIFIER ;
+               | "super" "." IDENTIFIER | "fun" lambda ;
 ```

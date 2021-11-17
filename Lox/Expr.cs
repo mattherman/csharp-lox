@@ -10,6 +10,7 @@ namespace Lox
         {
             T VisitAssignExpr(Assign expr);
             T VisitBinaryExpr(Binary expr);
+            T VisitFunctionExpr(Function expr);
             T VisitCallExpr(Call expr);
             T VisitGetExpr(Get expr);
             T VisitGroupingExpr(Grouping expr);
@@ -55,6 +56,23 @@ namespace Lox
             public override T Accept<T>(IVisitor<T> visitor)
             {
                 return visitor.VisitBinaryExpr(this);
+            }
+        }
+
+        public class Function : Expr
+        {
+            public List<Token> Parameters { get; }
+            public List<Stmt> Body { get; }
+
+            public Function(List<Token> parameters, List<Stmt> body)
+            {
+                Parameters = parameters;
+                Body = body;
+            }
+
+            public override T Accept<T>(IVisitor<T> visitor)
+            {
+                return visitor.VisitFunctionExpr(this);
             }
         }
 

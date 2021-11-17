@@ -156,14 +156,12 @@ namespace Lox
         public class Function : Stmt
         {
             public Token Name { get; }
-            public List<Token> Parameters { get; }
-            public List<Stmt> Body { get; }
+            public Expr.Function FunctionExpression { get; }
 
-            public Function(Token name, List<Token> parameters, List<Stmt> body)
+            public Function(Token name, Expr.Function functionExpression)
             {
                 Name = name;
-                Parameters = parameters;
-                Body = body;
+                FunctionExpression = functionExpression;
             }
 
             public override T Accept<T>(IVisitor<T> visitor)
