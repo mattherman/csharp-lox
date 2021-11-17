@@ -62,9 +62,11 @@ namespace Lox
             Consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
             
             var methods = new List<Stmt.Function>();
+            var classMethods = new List<Stmt.Function>();
             while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
             {
-                methods.Add(Function("method"));
+                var isClassMethod = Match(TokenType.CLASS);
+                (isClassMethod ? classMethods : methods).Add(Function("method"));
             }
 
             Consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");

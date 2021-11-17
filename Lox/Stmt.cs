@@ -58,12 +58,14 @@ namespace Lox
             public Token Name { get; }
             public Expr.Variable Superclass { get; }
             public List<Stmt.Function> Methods { get; }
+            public List<Stmt.Function> ClassMethods { get; }
 
-            public Class(Token name, Expr.Variable superclass, List<Stmt.Function> methods)
+            public Class(Token name, Expr.Variable superclass, List<Stmt.Function> methods, List<Stmt.Function> classMethods)
             {
                 Name = name;
                 Superclass = superclass;
                 Methods = methods;
+                ClassMethods = classMethods;
             }
 
             public override T Accept<T>(IVisitor<T> visitor)

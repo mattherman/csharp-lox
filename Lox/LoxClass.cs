@@ -2,13 +2,13 @@ using System.Collections.Generic;
 
 namespace Lox
 {
-    public class LoxClass : ILoxCallable
+    public class LoxClass : LoxInstance, ILoxCallable
     {
         public string Name { get; }
         public LoxClass Superclass { get; }
         private readonly Dictionary<string, LoxFunction> _methods;
 
-        public LoxClass(string name, LoxClass superclass, Dictionary<string, LoxFunction> methods)
+        public LoxClass(LoxClass metaclass, string name, LoxClass superclass, Dictionary<string, LoxFunction> methods) : base(metaclass)
         {
             Name = name;
             Superclass = superclass;

@@ -8,7 +8,7 @@ declaration    → classDecl
                | statement ;
 classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )? "{" function* "}" ;
 funDecl        → "fun" function ;
-function  → IDENTIFIER lambda ;
+function       → IDENTIFIER lambda ;
 parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
 
 varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;

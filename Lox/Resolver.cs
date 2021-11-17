@@ -213,7 +213,7 @@ namespace Lox
             BeginScope();
             _scopes.Peek()["this"] = true;
 
-            foreach (var method in stmt.Methods)
+            foreach (var method in stmt.Methods.Concat(stmt.ClassMethods))
             {
                 var declaration = FunctionType.Method;
                 if (method.Name.Lexeme == "init")
